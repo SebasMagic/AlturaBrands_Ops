@@ -24,3 +24,5 @@ build
 !.yarn/versions
 
 .medusa
+# Salida regenerable del ETL (deterministica desde el xlsx, que si esta versionado)
+data/master-data.json

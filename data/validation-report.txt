@@ -1,0 +1,48 @@
+==========================================================================
+ETL MASTER DATA - REPORTE DE VALIDACION
+==========================================================================
+
+Origen: Master Data Inventarios.xlsx
+Filas leidas del Excel: 427
+Filas descartadas (TOTAL y notas): 3
+Filas de datos: 424
+
+--- Reconstruccion de datos ausentes ---
+Color    : 71 ausentes -> 0 (de los recuperados, 17 salieron de la descripcion)
+Categoria: 65 ausentes -> 65
+
+--- Catalogo ---
+Productos (materiales unicos): 334
+Filas duplicadas por (bodega, material) fusionadas: 4
+Variantes generadas: 3064
+
+--- Cuadre contra el Excel ---
+Excel - tallas numeradas :    114,580
+Excel - otras tallas     :      9,403
+Excel - TOTAL            :    123,983
+JSON  - TOTAL            :    123,983
+JSON  - otras tallas     :      9,403
+
+CUADRE: OK, no se perdio ni una unidad
+
+--- Clasificacion del inventario ---
+  Propio y vendible (Bodega Matriz)            :      268
+  Comprado, en transito                        :   10,268
+  Disponibilidad del proveedor (NO vendible)   :  113,447
+  TOTAL                                        :  123,983
+
+  Por origen:
+    ATS USA                 :  113,447
+    Transito (60 dias)      :    8,031
+    Transito (90 dias)      :    2,090
+    Bodega Matriz           :      268
+    Transito (15 dias)      :      147
+
+--- Avisos de calidad ---
+  productos sin color                   :    0
+  productos sin categoria               :   50   [1001931, 1001942, 1002990, 1003480, 1007722]...
+  productos sin MSRP                    :    1   [1032002]
+  productos sin genero                  :    0
+  productos SOLO con 'otras tallas'     :   16   [1029002, 1029017, 1029746, 1030508, 1030511]...
+
+Escrito: C:\dev\AlturaBrands_Ops\data\master-data.json  (1449 KB)
