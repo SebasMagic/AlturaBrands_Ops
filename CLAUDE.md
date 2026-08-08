@@ -326,9 +326,14 @@ Nunca edites una migración ya aplicada. Genera una nueva.
 - [x] Redis configurado — Upstash us-east-1, TLS, sin eviction. Los tres módulos
       (cache, event-bus, workflow-engine) conectan correctamente.
 - [ ] Admin corriendo en local — falta crear usuario y levantar el servidor
-- [ ] Módulo `brand` + link a producto
+- [x] Módulo `brand` + link a producto — KEEN, 334 productos enlazados
+- [x] Catálogo maestro cargado — 334 productos, 3.064 variantes, 6 categorías,
+      región USD. Fuente: `data/master-data.json`, generado por `etl/`.
+      Los datos de demo del starter fueron purgados.
+- [ ] Módulo `supply_availability` poblado — 113.447 pares de ATS USA + 10.268
+      en tránsito. Tablas creadas, carga pendiente.
 - [ ] Seed de datos de prueba
-- [ ] Bodegas y niveles de inventario
+- [ ] Bodegas y niveles de inventario — Bodega Matriz, 268 pares propios
 - [ ] Flujo de venta end-to-end
 - [ ] Embudo de despacho
 

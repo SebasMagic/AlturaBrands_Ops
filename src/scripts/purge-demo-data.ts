@@ -1,7 +1,9 @@
 import { ExecArgs } from '@medusajs/framework/types'
 import { Modules } from '@medusajs/framework/utils'
 import {
+  deleteProductCategoriesWorkflow,
   deleteProductsWorkflow,
+  deleteRegionsWorkflow,
   deleteStockLocationsWorkflow,
 } from '@medusajs/medusa/core-flows'
 
@@ -19,6 +21,10 @@ import {
 
 const DEMO_PRODUCT_HANDLES = ['t-shirt', 'sweatshirt', 'sweatpants', 'shorts']
 const DEMO_STOCK_LOCATIONS = ['European Warehouse']
+const DEMO_CATEGORY_HANDLES = ['shirts', 'sweatshirts', 'pants', 'merch']
+// La región de demo está en EUR. El catálogo maestro viene en USD, así que
+// esta región no sirve para nada y solo confundiría al elegir moneda.
+const DEMO_REGIONS = ['Europe']
 
 export default async function purgeDemoData({ container }: ExecArgs) {
   const logger = container.resolve('logger')
@@ -61,14 +67,79 @@ export default async function purgeDemoData({ container }: ExecArgs) {
     logger.info(`Borradas ${locations.length} bodegas de demo.`)
   }
 
+  // --- Categorías de demo ------------------------------------------------
+  const categories = await productService.listProductCategories(
+    { handle: DEMO_CATEGORY_HANDLES },
+    { select: ['id', 'handle'] }
+  )
+
+  if (categories.length === 0) {
+    logger.info('Categorías de demo: no hay nada que borrar.')
+  } else {
+    logger.info(
+      `Categorías de demo a borrar: ${categories.map((c) => c.handle).join(', ')}`
+    )
+    await deleteProductCategoriesWorkflow(container).run({
+      input: categories.map((c) => c.id),
+    })
+    logger.info(`Borradas ${categories.length} categorías de demo.`)
+  }
+
+  // --- Región de demo ----------------------------------------------------
+  const regionService = container.resolve(Modules.REGION)
+  const regions = await regionService.listRegions({ name: { $in: DEMO_REGIONS } })
+
+  if (regions.length === 0) {
+    logger.info('Regiones de demo: no hay nada que borrar.')
+  } else {
+    logger.info(`Regiones de demo a borrar: ${regions.map((r) => r.name).join(', ')}`)
+    await deleteRegionsWorkflow(container).run({
+      input: { ids: regions.map((r) => r.id) },
+    })
+    logger.info(`Borradas ${regions.length} regiones de demo.`)
+  }
+
+  // --- Opciones huérfanas -------------------------------------------------
+  // `deleteProductsWorkflow` borra el producto y sus variantes, pero NO sus
+  // opciones. Quedan vivas sin dueño y contaminan cualquier consulta sobre
+  // opciones. Se detectan por diferencia, no por nombre, para que la limpieza
+  // siga funcionando con datos que aún no conocemos.
+  const productsWithOptions = await productService.listProducts(
+    {},
+    { relations: ['options'], select: ['id'] }
+  )
+  const usedOptionIds = new Set(
+    productsWithOptions.flatMap((p: any) => (p.options ?? []).map((o: any) => o.id))
+  )
+  const allOptions = await productService.listProductOptions(
+    {},
+    { select: ['id', 'title'] }
+  )
+  const orphanOptions = allOptions.filter((o: any) => !usedOptionIds.has(o.id))
+
+  if (orphanOptions.length === 0) {
+    logger.info('Opciones huérfanas: no hay ninguna.')
+  } else {
+    logger.info(
+      `Opciones huérfanas a borrar: ${orphanOptions.map((o: any) => o.title).join(', ')}`
+    )
+    await productService.deleteProductOptions(orphanOptions.map((o: any) => o.id))
+    logger.info(`Borradas ${orphanOptions.length} opciones huérfanas.`)
+  }
+
   // --- Estado final ------------------------------------------------------
-  const [remainingProducts, remainingLocations] = await Promise.all([
-    productService.listProducts({}),
-    stockLocationService.listStockLocations({}),
-  ])
+  const [remainingProducts, remainingLocations, remainingCategories, remainingRegions] =
+    await Promise.all([
+      productService.listProducts({}),
+      stockLocationService.listStockLocations({}),
+      productService.listProductCategories({}),
+      regionService.listRegions({}),
+    ])
 
   logger.info(
     `Estado final -> productos: ${remainingProducts.length}, ` +
-      `bodegas: ${remainingLocations.length}`
+      `bodegas: ${remainingLocations.length}, ` +
+      `categorías: ${remainingCategories.length}, ` +
+      `regiones: ${remainingRegions.length}`
   )
 }

@@ -9,7 +9,10 @@ Filas de datos: 424
 
 --- Reconstruccion de datos ausentes ---
 Color    : 71 ausentes -> 0 (de los recuperados, 17 salieron de la descripcion)
-Categoria: 65 ausentes -> 65
+Categoria: 65 ausentes -> 0
+  recuperadas cruzando por material : 0
+  recuperadas cruzando por modelo   : 46
+  marcadas 'Sin clasificar'         : 19
 
 --- Catalogo ---
 Productos (materiales unicos): 334
@@ -40,7 +43,7 @@ CUADRE: OK, no se perdio ni una unidad
 
 --- Avisos de calidad ---
   productos sin color                   :    0
-  productos sin categoria               :   50   [1001931, 1001942, 1002990, 1003480, 1007722]...
+  productos sin categoria               :    0
   productos sin MSRP                    :    1   [1032002]
   productos sin genero                  :    0
   productos SOLO con 'otras tallas'     :   16   [1029002, 1029017, 1029746, 1030508, 1030511]...

@@ -146,10 +146,33 @@ def main():
         else cat_by_mat.get(r["Material"]), axis=1
     )
 
+    # Segundo intento: la categoria es una propiedad de la linea de producto,
+    # asi que si otro material del MISMO modelo la tiene, aplica igual.
+    cat_by_model = (
+        df.dropna(subset=["categoria_final"])
+        .groupby("Modelo")["categoria_final"]
+        .agg(lambda s: s.mode().iloc[0])
+        .to_dict()
+    )
+    faltantes_antes = df["categoria_final"].isna().sum()
+    df["categoria_final"] = df.apply(
+        lambda r: r["categoria_final"] if isinstance(r["categoria_final"], str)
+        else cat_by_model.get(r["Modelo"]), axis=1
+    )
+    por_modelo = faltantes_antes - df["categoria_final"].isna().sum()
+
+    # Ultimo recurso: nunca dejar la categoria vacia, o los productos
+    # desaparecen de los filtros del admin.
+    sin_clasificar = int(df["categoria_final"].isna().sum())
+    df["categoria_final"] = df["categoria_final"].fillna("Sin clasificar")
+
     log("\n--- Reconstruccion de datos ausentes ---")
     log(f"Color    : {color_before} ausentes -> {df['color_final'].isna().sum()} "
         f"(de los recuperados, {recovered_desc} salieron de la descripcion)")
-    log(f"Categoria: {cat_before} ausentes -> {df['categoria_final'].isna().sum()}")
+    log(f"Categoria: {cat_before} ausentes -> 0")
+    log(f"  recuperadas cruzando por material : {cat_before - faltantes_antes}")
+    log(f"  recuperadas cruzando por modelo   : {por_modelo}")
+    log(f"  marcadas 'Sin clasificar'         : {sin_clasificar}")
 
     # --- 3. Construir productos (uno por material) --------------------------
     products = {}
