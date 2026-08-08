@@ -1,0 +1,625 @@
+[
+  {
+    "code": "KEEN-M-01",
+    "name": "KEEN M · 12 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 12,
+    "is_default": true,
+    "usos_observados": 6,
+    "modelos_observados": [
+      "HIGHTRAIL MID WP",
+      "JASPER MERKO",
+      "KS86",
+      "TARGHEE APEX MID WP",
+      "TARGHEE APEX WP",
+      "TARGHEE IV WP"
+    ],
+    "entries": [
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-02",
+    "name": "KEEN M · 10 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 10,
+    "is_default": false,
+    "usos_observados": 4,
+    "modelos_observados": [
+      "JASPER ZIONIC",
+      "KS86 LEA",
+      "TARGHEE APEX WP",
+      "TARGHEE IV MID WP"
+    ],
+    "entries": [
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-03",
+    "name": "KEEN M · 11 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 11,
+    "is_default": false,
+    "usos_observados": 3,
+    "modelos_observados": [
+      "JASPER ZIONIC",
+      "TARGHEE IV MID WP",
+      "UNEEK TREKKER"
+    ],
+    "entries": [
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-04",
+    "name": "KEEN M · 9 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 9,
+    "is_default": false,
+    "usos_observados": 2,
+    "modelos_observados": [
+      "HIGHTRAIL WP",
+      "TARGHEE IV VENT"
+    ],
+    "entries": [
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-05",
+    "name": "KEEN M · 11 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 11,
+    "is_default": false,
+    "usos_observados": 1,
+    "modelos_observados": [
+      "JASPER ZIONIC WP"
+    ],
+    "entries": [
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-06",
+    "name": "KEEN M · 10 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 10,
+    "is_default": false,
+    "usos_observados": 1,
+    "modelos_observados": [
+      "TARGHEE IV WP"
+    ],
+    "entries": [
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-07",
+    "name": "KEEN M · 8 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 8,
+    "is_default": false,
+    "usos_observados": 1,
+    "modelos_observados": [
+      "UNEEK"
+    ],
+    "entries": [
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-M-08",
+    "name": "KEEN M · 11 pares",
+    "brand_code": "KEEN",
+    "scale": "M",
+    "pairs_per_pack": 11,
+    "is_default": false,
+    "usos_observados": 1,
+    "modelos_observados": [
+      "UNEEK"
+    ],
+    "entries": [
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "9",
+        "size_value": 9.0,
+        "ratio": 2
+      },
+      {
+        "size_label": "9.5",
+        "size_value": 9.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "10",
+        "size_value": 10.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "10.5",
+        "size_value": 10.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "11",
+        "size_value": 11.0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-W-01",
+    "name": "KEEN W · 10 pares",
+    "brand_code": "KEEN",
+    "scale": "W",
+    "pairs_per_pack": 10,
+    "is_default": true,
+    "usos_observados": 7,
+    "modelos_observados": [
+      "JASPER ZIONIC",
+      "TARGHEE IV WP",
+      "UNEEK ASTORIA",
+      "WHISPER"
+    ],
+    "entries": [
+      {
+        "size_label": "6",
+        "size_value": 6.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "6.5",
+        "size_value": 6.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 3
+      },
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-W-02",
+    "name": "KEEN W · 12 pares",
+    "brand_code": "KEEN",
+    "scale": "W",
+    "pairs_per_pack": 12,
+    "is_default": false,
+    "usos_observados": 5,
+    "modelos_observados": [
+      "HIGHTRAIL MID WP",
+      "HIGHTRAIL WP",
+      "WHISPER",
+      "WHISPER LATTICE",
+      "WHISPER LITE"
+    ],
+    "entries": [
+      {
+        "size_label": "5",
+        "size_value": 5.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "5.5",
+        "size_value": 5.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "6",
+        "size_value": 6.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "6.5",
+        "size_value": 6.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 3
+      },
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-W-03",
+    "name": "KEEN W · 11 pares",
+    "brand_code": "KEEN",
+    "scale": "W",
+    "pairs_per_pack": 11,
+    "is_default": false,
+    "usos_observados": 2,
+    "modelos_observados": [
+      "JASPER",
+      "JASPER MERKO"
+    ],
+    "entries": [
+      {
+        "size_label": "5.5",
+        "size_value": 5.5,
+        "ratio": 1
+      },
+      {
+        "size_label": "6",
+        "size_value": 6.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "6.5",
+        "size_value": 6.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 3
+      },
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "code": "KEEN-W-04",
+    "name": "KEEN W · 11 pares",
+    "brand_code": "KEEN",
+    "scale": "W",
+    "pairs_per_pack": 11,
+    "is_default": false,
+    "usos_observados": 2,
+    "modelos_observados": [
+      "TARGHEE IV VENT",
+      "UNEEK"
+    ],
+    "entries": [
+      {
+        "size_label": "5",
+        "size_value": 5.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "6",
+        "size_value": 6.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "6.5",
+        "size_value": 6.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "7",
+        "size_value": 7.0,
+        "ratio": 3
+      },
+      {
+        "size_label": "7.5",
+        "size_value": 7.5,
+        "ratio": 2
+      },
+      {
+        "size_label": "8",
+        "size_value": 8.0,
+        "ratio": 1
+      },
+      {
+        "size_label": "8.5",
+        "size_value": 8.5,
+        "ratio": 1
+      }
+    ]
+  }
+]

@@ -340,6 +340,12 @@ Nunca edites una migración ya aplicada. Genera una nueva.
 - [x] Bodegas y niveles de inventario — Bodega Matriz, 702 niveles, 268 pares
       propios y 10.268 en `incoming_quantity`. Cuadre total verificado: 123.983.
 - [x] Capa BI — schema `bi`, vistas de solo lectura. Ver `sql/bi/`.
+      **`pnpm db:migrate` tira y reconstruye este schema**: Postgres no deja
+      alterar una columna de la que cuelga una vista, así que la capa de BI
+      bloqueaba las migraciones. No uses `medusa db:migrate` directo.
+- [x] Curvas de tallas — módulo `size_curve`, 12 curvas de KEEN inferidas del
+      formato de pedido (`etl/extract_size_curves.py`). 5 marcadas con huecos
+      sospechosos, pendientes de validación del negocio.
 - [ ] Seed de datos de prueba
 - [ ] Flujo de venta end-to-end
 - [ ] Embudo de despacho
