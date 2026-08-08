@@ -330,10 +330,12 @@ Nunca edites una migración ya aplicada. Genera una nueva.
 - [x] Catálogo maestro cargado — 334 productos, 3.064 variantes, 6 categorías,
       región USD. Fuente: `data/master-data.json`, generado por `etl/`.
       Los datos de demo del starter fueron purgados.
-- [ ] Módulo `supply_availability` poblado — 113.447 pares de ATS USA + 10.268
-      en tránsito. Tablas creadas, carga pendiente.
+- [x] Módulo `supply_availability` poblado — 3.297 filas: 113.447 pares en ATS USA
+      (no vendibles) + 10.268 en tránsito con su ETA. Enlazadas a variante.
+- [x] Bodegas y niveles de inventario — Bodega Matriz, 702 niveles, 268 pares
+      propios y 10.268 en `incoming_quantity`. Cuadre total verificado: 123.983.
+- [x] Capa BI — schema `bi`, vistas de solo lectura. Ver `sql/bi/`.
 - [ ] Seed de datos de prueba
-- [ ] Bodegas y niveles de inventario — Bodega Matriz, 268 pares propios
 - [ ] Flujo de venta end-to-end
 - [ ] Embudo de despacho
 

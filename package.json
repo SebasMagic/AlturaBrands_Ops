@@ -37,6 +37,8 @@
     "@swc/core": "^1.7.28",
     "@swc/jest": "^0.2.36",
     "cross-env": "^7.0.3",
+    "@types/pg": "^8.11.10",
+    "pg": "^8.20.0",
     "@types/jest": "^29.5.13",
     "@types/node": "^20.12.11",
     "@types/react": "^18.3.2",
