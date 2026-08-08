@@ -54,6 +54,41 @@
           "enumItems": [],
           "mappedType": "text"
         },
+        "order_unit": {
+          "name": "order_unit",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'PAIR'",
+          "comment": null,
+          "enumItems": [
+            "PACK",
+            "PAIR"
+          ],
+          "mappedType": "enum"
+        },
+        "default_pack_size": {
+          "name": "default_pack_size",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamptz",

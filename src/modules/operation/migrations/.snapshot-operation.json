@@ -22,8 +22,8 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "operation_code": {
-          "name": "operation_code",
+        "code": {
+          "name": "code",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -38,8 +38,8 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "material_code": {
-          "name": "material_code",
+        "name": {
+          "name": "name",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -54,8 +54,8 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "sku": {
-          "name": "sku",
+        "currency_code": {
+          "name": "currency_code",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -70,9 +70,9 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "source": {
-          "name": "source",
-          "type": "text",
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -81,61 +81,10 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "true",
           "comment": null,
           "enumItems": [],
-          "mappedType": "text"
-        },
-        "kind": {
-          "name": "kind",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "enumItems": [
-            "SUPPLIER",
-            "IN_TRANSIT"
-          ],
-          "mappedType": "enum"
-        },
-        "eta_days": {
-          "name": "eta_days",
-          "type": "integer",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "enumItems": [],
-          "mappedType": "integer"
-        },
-        "quantity": {
-          "name": "quantity",
-          "type": "integer",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "enumItems": [],
-          "mappedType": "integer"
+          "mappedType": "boolean"
         },
         "created_at": {
           "name": "created_at",
@@ -186,20 +135,29 @@
           "mappedType": "datetime"
         }
       },
-      "name": "supply_availability",
+      "name": "operation",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_supply_availability_deleted_at",
+          "keyName": "IDX_operation_code_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_supply_availability_deleted_at\" ON \"supply_availability\" (\"deleted_at\") WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_operation_code_unique\" ON \"operation\" (\"code\") WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "supply_availability_pkey",
+          "keyName": "IDX_operation_deleted_at",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_operation_deleted_at\" ON \"operation\" (\"deleted_at\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "operation_pkey",
           "columnNames": [
             "id"
           ],

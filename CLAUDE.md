@@ -323,8 +323,13 @@ Nunca edites una migración ya aplicada. Genera una nueva.
 - [x] Supabase conectado (migraciones + runtime verificados) — `AlturaBrands-ERP`, us-east-1.
       Pooler `aws-0`: 6543 runtime / 5432 migraciones, ambos probados con conexión real.
       181 migraciones aplicadas, 143 tablas.
-- [x] Redis configurado — Upstash us-east-1, TLS, sin eviction. Los tres módulos
-      (cache, event-bus, workflow-engine) conectan correctamente.
+- [x] Redis configurado — los tres módulos (cache, event-bus, workflow-engine)
+      conectan correctamente. **En local se usa memoria, no Redis**: BullMQ
+      sondea sin parar y agotó los 500k comandos del tier gratuito de Upstash en
+      horas. Para desplegar hace falta un Redis de tarifa fija, no por comando.
+- [x] Operación-país como dimensión — módulo `operation`, Colombia (`CO`) dada
+      de alta. Reglas de pedido por marca: KEEN pide en bultos (`order_unit`).
+      Ver §10.
 - [ ] Admin corriendo en local — falta crear usuario y levantar el servidor
 - [x] Módulo `brand` + link a producto — KEEN, 334 productos enlazados
 - [x] Catálogo maestro cargado — 334 productos, 3.064 variantes, 6 categorías,

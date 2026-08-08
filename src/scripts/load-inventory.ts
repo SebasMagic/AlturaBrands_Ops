@@ -31,6 +31,9 @@ import { SUPPLY_AVAILABILITY_MODULE } from '../modules/supply-availability'
  *   pnpm exec medusa exec ./src/scripts/load-inventory.ts
  */
 
+// Operación a la que pertenece esta carga. Al añadir países, este script se
+// parametriza por operación en vez de duplicarse.
+const OPERATION_CODE = 'CO'
 const WAREHOUSE_NAME = 'Bodega Matriz'
 const BATCH = 500
 
@@ -106,6 +109,7 @@ export default async function loadInventory({ container }: ExecArgs) {
   const owned = new Map<string, number>()
   const incoming = new Map<string, number>()
   const supplyRows: {
+    operation_code: string
     material_code: string
     sku: string
     source: string
@@ -129,6 +133,7 @@ export default async function loadInventory({ container }: ExecArgs) {
             incoming.set(v.sku, (incoming.get(v.sku) ?? 0) + e.unidades)
           }
           supplyRows.push({
+            operation_code: OPERATION_CODE,
             material_code: String(p.material),
             sku: v.sku,
             source: e.origen,

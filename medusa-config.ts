@@ -105,6 +105,7 @@ module.exports = defineConfig({
     ...redisModules,
     // Módulos de dominio propios. Ver CLAUDE.md §4.1: cada uno aislado, sin
     // foreign keys entre ellos; las relaciones van por Module Links.
+    { resolve: './src/modules/operation' },
     { resolve: './src/modules/brand' },
     { resolve: './src/modules/supply-availability' },
   ],

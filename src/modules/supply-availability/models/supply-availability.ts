@@ -17,6 +17,11 @@ import { model } from '@medusajs/framework/utils'
 const SupplyAvailability = model.define('supply_availability', {
   id: model.id().primaryKey(),
 
+  // Operación-país a la que pertenece esta disponibilidad. Clave natural, no
+  // Module Link: es una tabla de hechos y un join extra por fila encarecería
+  // toda consulta de BI sin ganar integridad (ver módulo `operation`).
+  operation_code: model.text(),
+
   // Clave de negocio del archivo maestro. Se conserva para poder rastrear
   // cada fila hasta su origen sin depender de los ids de Medusa.
   material_code: model.text(),

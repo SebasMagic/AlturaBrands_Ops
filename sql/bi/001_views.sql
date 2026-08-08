@@ -14,6 +14,35 @@
 
 create schema if not exists bi;
 
+-- `create or replace view` no admite cambios en la lista de columnas, y estas
+-- vistas van a evolucionar. Se recrean desde cero: son capa de lectura pura,
+-- no guardan estado, y reconstruirlas es instantáneo.
+drop view if exists bi.v_resumen_talla cascade;
+drop view if exists bi.v_valorizacion cascade;
+drop view if exists bi.v_cobertura_corrida cascade;
+drop view if exists bi.v_posicion cascade;
+drop view if exists bi.fact_supply cascade;
+drop view if exists bi.fact_stock cascade;
+drop view if exists bi.dim_variant cascade;
+drop view if exists bi.dim_operation cascade;
+
+-- -----------------------------------------------------------------------------
+-- dim_operation — las operaciones-país.
+--
+-- No es multitenant: es una empresa con operaciones en varios países. Por eso
+-- la operación es una dimensión más y no una frontera de infraestructura: la
+-- gerencia consolida con un `group by`, y la separación operativa se resuelve
+-- con permisos y scope en la interfaz.
+-- -----------------------------------------------------------------------------
+create or replace view bi.dim_operation as
+select
+    o.code                                          as operacion,
+    o.name                                          as operacion_nombre,
+    o.currency_code                                 as moneda,
+    o.is_active                                     as activa
+from operation o
+where o.deleted_at is null;
+
 -- -----------------------------------------------------------------------------
 -- dim_variant — una fila por variante, con todo lo descriptivo aplanado.
 --
@@ -74,6 +103,7 @@ where v.deleted_at is null;
 create or replace view bi.fact_stock as
 select
     ii.sku,
+    coalesce(o.code, 'SIN_OPERACION')               as operacion,
     sl.id                                           as bodega_id,
     sl.name                                         as bodega,
     il.stocked_quantity::bigint                     as en_bodega,
@@ -85,6 +115,12 @@ join inventory_item ii
      on ii.id = il.inventory_item_id and ii.deleted_at is null
 join stock_location sl
      on sl.id = il.location_id and sl.deleted_at is null
+-- La bodega pertenece a una operación vía Module Link: `stock_location` es del
+-- core y no se le añaden columnas (CLAUDE.md §4.2).
+left join operation_operation_stock_location_stock_location osl
+     on osl.stock_location_id = sl.id and osl.deleted_at is null
+left join operation o
+     on o.id = osl.operation_id and o.deleted_at is null
 where il.deleted_at is null;
 
 -- -----------------------------------------------------------------------------
@@ -96,6 +132,7 @@ where il.deleted_at is null;
 create or replace view bi.fact_supply as
 select
     sa.sku,
+    sa.operation_code                               as operacion,
     sa.material_code,
     sa.source                                       as origen,
     sa.kind                                         as tipo,
@@ -111,8 +148,33 @@ where sa.deleted_at is null;
 -- columna. Sumar "propio" con "disponible en el proveedor" es exactamente el
 -- error que este modelo existe para impedir.
 -- -----------------------------------------------------------------------------
+-- El grano es (variante, operación). Las claves se construyen uniendo ambos
+-- hechos: una variante puede tener existencias en un país, disponibilidad de
+-- proveedor en otro, o ambas. Así la vista sirve igual con un país que con
+-- cinco, sin tocar una línea.
 create or replace view bi.v_posicion as
+with claves as (
+    select sku, operacion from bi.fact_stock
+    union
+    select sku, operacion from bi.fact_supply
+),
+stock as (
+    select sku, operacion,
+           sum(en_bodega)  as en_bodega,
+           sum(reservado)  as reservado,
+           sum(disponible) as disponible
+    from bi.fact_stock
+    group by sku, operacion
+),
+supply as (
+    select sku, operacion,
+           sum(unidades) filter (where tipo = 'IN_TRANSIT') as en_transito,
+           sum(unidades) filter (where tipo = 'SUPPLIER')   as en_proveedor
+    from bi.fact_supply
+    group by sku, operacion
+)
 select
+    k.operacion,
     d.sku,
     d.material,
     d.marca,
@@ -129,20 +191,16 @@ select
     coalesce(s.en_bodega, 0)                        as propio,
     coalesce(s.reservado, 0)                        as reservado,
     coalesce(s.disponible, 0)                       as vendible_hoy,
-    coalesce(t.en_transito, 0)                      as en_transito,
-    coalesce(t.en_proveedor, 0)                     as en_proveedor,
-    coalesce(s.en_bodega, 0) + coalesce(t.en_transito, 0) as propio_mas_transito
-from bi.dim_variant d
-left join bi.fact_stock s
-     on s.sku = d.sku
-left join (
-    select
-        sku,
-        sum(unidades) filter (where tipo = 'IN_TRANSIT') as en_transito,
-        sum(unidades) filter (where tipo = 'SUPPLIER')   as en_proveedor
-    from bi.fact_supply
-    group by sku
-) t on t.sku = d.sku;
+    coalesce(sp.en_transito, 0)                     as en_transito,
+    coalesce(sp.en_proveedor, 0)                    as en_proveedor,
+    coalesce(s.en_bodega, 0) + coalesce(sp.en_transito, 0) as propio_mas_transito
+from claves k
+join bi.dim_variant d
+     on d.sku = k.sku
+left join stock s
+     on s.sku = k.sku and s.operacion = k.operacion
+left join supply sp
+     on sp.sku = k.sku and sp.operacion = k.operacion;
 
 -- -----------------------------------------------------------------------------
 -- v_cobertura_corrida — salud del surtido por material.
@@ -153,6 +211,7 @@ left join (
 -- -----------------------------------------------------------------------------
 create or replace view bi.v_cobertura_corrida as
 select
+    operacion,
     material,
     marca,
     categoria,
@@ -171,7 +230,7 @@ select
     sum(en_transito)                                        as en_transito,
     sum(en_proveedor)                                       as en_proveedor
 from bi.v_posicion
-group by material, marca, categoria, modelo, genero, color;
+group by operacion, material, marca, categoria, modelo, genero, color;
 
 -- -----------------------------------------------------------------------------
 -- v_valorizacion — inventario propio a costo y a precio de lista.
@@ -181,6 +240,7 @@ group by material, marca, categoria, modelo, genero, color;
 -- -----------------------------------------------------------------------------
 create or replace view bi.v_valorizacion as
 select
+    operacion,
     categoria,
     genero,
     modelo,
@@ -196,7 +256,7 @@ select
     end                                                     as margen_pct
 from bi.v_posicion
 where propio > 0
-group by categoria, genero, modelo;
+group by operacion, categoria, genero, modelo;
 
 -- -----------------------------------------------------------------------------
 -- v_resumen_talla — demanda potencial por talla dentro de cada escala.
@@ -206,6 +266,7 @@ group by categoria, genero, modelo;
 -- -----------------------------------------------------------------------------
 create or replace view bi.v_resumen_talla as
 select
+    operacion,
     escala,
     genero,
     talla_label,
@@ -216,4 +277,4 @@ select
     sum(en_proveedor)                                       as en_proveedor
 from bi.v_posicion
 where not pendiente_desglose
-group by escala, genero, talla_label, talla_valor;
+group by operacion, escala, genero, talla_label, talla_valor;
