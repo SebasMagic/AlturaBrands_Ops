@@ -1,28 +1,24 @@
-/dist
+# Secretos
 .env
-.DS_Store
-/uploads
-/node_modules
-yarn-error.log
+.env.local
 
-.idea
+# Dependencias
+node_modules/
 
-coverage
-
-!src/**
-
-./tsconfig.tsbuildinfo
-medusa-db.sql
-build
-.cache
-
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-.medusa
-# Salida regenerable del ETL (deterministica desde el xlsx, que si esta versionado)
+# Salida regenerable del ETL (determinista desde los .xlsx, que sí se versionan)
 data/master-data.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Excel abierto
+~$*.xlsx
+
+# Sistema
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
