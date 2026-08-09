@@ -1,466 +1,371 @@
-# CLAUDE.md — Mini ERP AlturaBrands
+# CLAUDE.md — ERP Ligero (Medusa v2 + Supabase)
 
-Contrato de trabajo. Léelo completo antes de escribir código. Si algo aquí
-contradice tu intuición por defecto, **gana este archivo**.
-
-> **Cambio de rumbo, agosto 2026.** La primera versión se construyó sobre
-> Medusa v2. Se abandonó: arrastraba una plataforma de comercio entera
-> (carrito, checkout, pagos, promociones) de la que usábamos el 30%, y su
-> back-office hablaba de *Products* y *Orders* cuando el negocio habla de
-> materiales, bultos e importaciones. El contrato viejo se conserva en
-> `docs/ARCHIVO-contrato-medusa.md`; tiene detalle técnico que sigue siendo
-> cierto. **Lo que aquí se conserva íntegro es el conocimiento del dominio de
-> §5 en adelante: eso costó análisis, no código, y no depende de ningún stack.**
+Este archivo es el contrato de trabajo para Claude Code en este repositorio.
+Léelo completo antes de escribir código. Si algo aquí contradice tu intuición por
+defecto, **gana este archivo**.
 
 ---
 
-## 1. Qué es AlturaBrands
+## 1. Qué estamos construyendo
 
-Un **distribuidor mayorista multimarca de calzado**, con operación en varios
-países. Compra a las marcas (KEEN y las que vengan), importa, y vende al por
-mayor a minoristas.
+Un **ERP operativo ligero** para gestión de ventas, inventario multi-bodega y
+operaciones de despacho. No es un e-commerce: es un back-office. El usuario final
+es personal interno (vendedores, bodegueros, coordinadores de despacho), no un
+comprador anónimo.
 
-El ciclo real del negocio:
+Alcance de la **Fase 1** (lo único que existe por ahora):
 
-```
-disponibilidad de la marca  →  se monta pedido  →  la marca ajusta cantidades
-   →  se aprueba  →  la marca despacha  →  importación (tránsito)
-   →  llega a bodega  →  se vende a un minorista  →  se despacha  →  entregado
-```
-
-Dos embudos distintos que se tocan en la bodega: **compra/importación** y
-**venta/despacho**. Confundirlos es el error de modelado más caro que se puede
-cometer aquí.
-
-## 2. Alcance
-
-**Dentro:**
-
-| Dominio | Qué resuelve |
+| Dominio | Qué debe resolver |
 |---|---|
-| **Catálogo** | Materiales, variantes por talla, marcas, categorías, curvas |
-| **Disponibilidad** | Lo que la marca tiene y aún no es nuestro |
-| **Compras** | Pedido a marca, ajuste, aprobación, despacho, tránsito |
-| **Inventario** | Stock por bodega, reservas, ajustes, transferencias, kardex |
-| **Ventas** | Cotización → pedido, clientes, listas de precio |
-| **Despacho** | Reserva → alistamiento → empaque → despacho → entregado |
-| **BI** | Posición, cobertura de corrida, valorización, lead times |
+| **Catálogo** | Productos, variantes, marcas, categorías, unidades de medida |
+| **Inventario** | Stock por bodega, reservas, ajustes, transferencias entre bodegas, kardex |
+| **Ventas** | Cotización → pedido, clientes, listas de precio, condiciones comerciales |
+| **Operaciones** | Embudo de despacho: pedido → reserva → alistamiento → empaque → despacho → entregado |
 
-**Fuera, y no lo adelantes:** contabilidad, cuentas por cobrar/pagar,
-facturación electrónica DIAN, nómina, POS, tienda en línea. **No hay carrito,
-ni checkout, ni pasarela de pagos.** Esto es back-office.
+**Fuera de alcance por ahora** (no lo construyas, no lo "adelantes"):
+compras/proveedores, contabilidad, cuentas por cobrar/pagar, facturación
+electrónica DIAN, nómina, POS.
 
----
-
-## 3. Multitenancy — la decisión estructural
-
-**No es multitenant en el sentido SaaS.** Es *una* empresa con operaciones en
-varios países. Nadie a quien ocultarle datos: la gerencia necesita consolidar.
-Lo que se busca es **separación operativa** — que el equipo de Colombia vea
-Colombia — y eso es un problema de permisos, no de infraestructura.
-
-**Una sola base de datos. El país es una dimensión, no una frontera.**
-
-Razones, en orden de peso:
-
-1. **El reporte consolidado es un `group by`**, no un ETL entre bases.
-2. **Partir después es fácil; fusionar es un proyecto.** Separar una base
-   centralizada por país es un `where` y un dump filtrado. Fusionar cinco bases
-   con ids que colisionan, no.
-3. **Una migración, un despliegue.** N bases significan N esquemas divergiendo.
-
-**Lo único que cambiaría esto**: que un país exija por ley residencia de datos
-en su territorio. Entonces *ese* país sale a base propia. Híbrido, no todo o
-nada.
-
-### Cómo se implementa
-
-- Toda tabla de negocio lleva **`operation_id`**, sin excepción.
-- **RLS de Postgres es el mecanismo de aislamiento**, no un filtro en el
-  frontend. Un `where` olvidado en la aplicación es una fuga; una política RLS
-  no se olvida.
-- El JWT de Supabase Auth lleva las operaciones del usuario. Las políticas leen
-  de ahí.
-- La gerencia tiene un rol que ve todas las operaciones.
-
-> Esto invierte una regla del contrato anterior, que **prohibía** RLS y Supabase
-> Auth. Aquella prohibición era correcta *entonces*: Medusa se conectaba con un
-> rol de servicio, hacía bypass de RLS y traía su propio sistema de identidad,
-> así que RLS daba falsa sensación de seguridad y Auth duplicaba la verdad. Sin
-> Medusa, ambas cosas pasan a ser la columna vertebral.
+Si una decisión de diseño de Fase 1 bloquea alguno de esos módulos futuros,
+dilo explícitamente antes de implementar.
 
 ---
 
-## 4. Stack
+## 2. Stack
 
-- **Base de datos:** PostgreSQL en Supabase. Es el centro, no un detalle.
-- **Autorización:** RLS + Supabase Auth (JWT con claims de operación y rol).
-- **API de lectura:** PostgREST (lo que Supabase expone solo). Para leer, no
-  hace falta escribir endpoints.
-- **Lógica de negocio:** funciones Postgres (`plpgsql`) para lo transaccional,
-  y un servicio Node/TypeScript delgado para lo que necesite orquestación,
-  archivos o integraciones.
-- **Archivos:** Supabase Storage (fotos, remisiones, evidencias de entrega,
-  tickets de despacho).
-- **ETL:** Python + pandas. Ya probado, se conserva.
-- **Frontend:** propio, lo desarrolla el equipo. Este repositorio expone datos
-  y reglas; no impone interfaz.
+- **Backend / dominio:** Medusa v2 (Node 20+, TypeScript, MikroORM)
+- **Base de datos:** PostgreSQL en **Supabase**
+- **Cache / event bus:** Redis (local en dev, Upstash o similar en prod)
+- **Admin UI:** Medusa Admin (React) extendido con Widgets y UI Routes — ver §4.5
+- **Storage de archivos:** Supabase Storage
+- **Hosting:** Railway (server + worker). **No Vercel** — ver §4.6
+- **Gestor de paquetes:** pnpm
 
-### Por qué la lógica crítica va en la base
+### Por qué Medusa y no un ERP tradicional
 
-Las reservas de inventario y las transiciones de estado **deben ser atómicas**.
-Una reserva calculada en el frontend y escrita en dos pasos es una sobreventa
-esperando a ocurrir cuando dos vendedores toquen el mismo par a la vez.
-
-Esto era lo único que Medusa aportaba de verdad, así que hay que reponerlo con
-seriedad: constraints, transacciones y funciones. No con confianza en que el
-cliente haga lo correcto. **Ver §8.**
+Medusa aporta el núcleo transaccional difícil ya resuelto: reservas de
+inventario, consistencia entre órdenes y stock, y rollback en flujos
+multi-paso. Ese es el 70% del riesgo técnico de un ERP operativo.
+No lo reimplementes.
 
 ---
 
-## 5. El dominio, tal como es
+## 3. Supabase: reglas duras
 
-> Todo lo de esta sección se descubrió analizando los archivos reales del
-> negocio, no se supuso. Son los cimientos.
+Supabase es **el Postgres gestionado**, nada más. Medusa maneja su propio
+schema, sus propias migraciones y su propio sistema de auth/permisos.
 
-### 5.1 La jerarquía
+### Lo que SÍ usamos de Supabase
+- Postgres gestionado (backups, branching, dashboard SQL)
+- Supabase Storage para adjuntos (fotos de producto, remisiones, evidencias de entrega)
+- Realtime **solo** para dashboards de lectura, si más adelante hace falta
 
-```
-Marca (KEEN, …)
-  └─ Modelo         (JASPER ZIONIC)          73 modelos
-      └─ Material   (1031790)               334 materiales   ← clave de negocio
-          └─ Talla  (M 9.5)               3.064 variantes
-```
+### Lo que NO usamos
+- ❌ **Supabase Auth** — Medusa tiene su propio módulo `auth` y `user`.
+  Mezclarlos genera dos fuentes de verdad de identidad. No lo hagas.
+- ❌ **RLS sobre tablas de Medusa** — Medusa se conecta con un rol de servicio
+  y hace bypass. Poner RLS ahí da falsa sensación de seguridad.
+  La autorización vive en la capa de aplicación (Medusa API + middlewares).
+- ❌ **Escribir en tablas de Medusa desde el SQL editor de Supabase** — rompes
+  invariantes del dominio. Todo pasa por workflows.
 
-**`Material` es un entero de 7 dígitos y es LA clave de negocio.** Verificado:
-ningún material tiene dos modelos, géneros, categorías ni precios de lista
-distintos. Un material es un modelo en un color concreto.
+### Conexión — el gotcha crítico
 
-`Descripcion material` codifica `MODELO G-COLOR`, pero **viene truncada a 40
-caracteres**. Sirve para recuperar un color ausente solo como último recurso;
-la columna `Color` y el cruce por material mandan.
+Supabase expone tres modos. **No son intercambiables para Medusa:**
 
-### 5.2 La talla lleva escala, siempre
+| Uso | Puerto / modo | Por qué |
+|---|---|---|
+| **Migraciones** (`medusa db:migrate`) | Conexión directa o pooler en **session mode (5432)** | El pooler en transaction mode rompe prepared statements y DDL. Las migraciones fallan de forma confusa. |
+| **Runtime** de la app | Pooler **transaction mode (6543)** | Mejor manejo de conexiones concurrentes |
 
-Las corridas reales:
+Configura **dos variables separadas** en `.env`:
 
-| Género | Corrida |
-|---|---|
-| MEN | 7 – 13 |
-| WOMEN | 5 – 12 |
-| CHILDREN | 8 – 13 |
-| YOUTH | 1 – 7 |
-| TOTS | 4 – 7 |
+```env
+# Runtime — pooler transaction mode
+DATABASE_URL=postgresql://postgres.[ref]:[pass]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true
 
-**Una 8 de CHILDREN no es una 8 de MEN.** Como columnas de Excel comparten
-celda; como dato son zapatos distintos. Guardar `8` a secas hace que cualquier
-reporte agregado sume peras con manzanas.
-
-Convención: **etiqueta con escala** (`M 8`, `W 5.5`, `C 10`, `Y 4`, `T 5`) para
-mostrar, y **escala + valor numérico separados** para ordenar y comparar.
-
-El valor numérico es **decimal**, no entero. Media talla es media talla.
-
-### 5.3 Existencias: tres naturalezas que jamás se suman
-
-Del archivo maestro, 123.983 pares:
-
-| Origen | Pares | Qué es |
-|---|---:|---|
-| **Bodega Matriz** | **268** | **Nuestro. Vendible.** |
-| Tránsito 15/60/90 días | 10.268 | Comprado, no recibido |
-| ATS USA | 113.447 | Disponibilidad de la marca. **No es nuestro** |
-
-**El 91,5% del archivo es inventario que no poseemos.** Si ATS USA se modela
-como bodega, un vendedor comprometerá 113.000 pares que habría que comprar
-primero. **Vender de ATS exige antes una orden de compra.**
-
-Regla: **una sola cosa es inventario — lo que está en nuestras bodegas.** Lo
-demás es *disponibilidad*, y vive en otra tabla que no admite reservas.
-
-### 5.4 Bultos y curvas de talla
-
-Las marcas no venden pares sueltos: venden **bultos**, paquetes cerrados con
-una distribución fija por talla.
-
-```
-cantidades = bultos × curva
+# Migraciones — session mode / conexión directa
+DIRECT_URL=postgresql://postgres.[ref]:[pass]@aws-0-[region].pooler.supabase.com:5432/postgres
 ```
 
-Verificado en 35 de 36 líneas del pedido real de KEEN. Las 7 curvas reales:
+Si una migración falla con un error sobre prepared statements o `bind message`,
+el problema es este. Revísalo antes de tocar el schema.
 
-```
-MEN    núcleo  8.5:2  9:2  9.5:2  10:1  10.5:1  11:1
-       arrancan en 7, 7.5, 8 u 8.5          → 4 curvas, 9 a 12 pares
-WOMEN  núcleo  6.5:2  7:3  7.5:2  8:1  8.5:1
-       arrancan en 5, 5.5 o 6               → 3 curvas, 10 a 12 pares
-```
-
-**La curva es una regla de la MARCA, no del producto ni del negocio.** KEEN pide
-en bultos; otra marca aceptará pares sueltos. Modelarlo como constante global
-obliga a rehacerlo con la segunda marca.
-
-**El equipo ajusta las curvas.** Una línea de pedido guarda **la curva aplicada
-más los ajustes**, nunca una curva inventada. Así queda registrado "usó
-KEEN-M-01 y quitó la 10.5", que responde preguntas de negocio.
-
-> **Cómo distinguir una curva real de un pedido ajustado:** por el **hueco
-> interno**, no por la longitud. Una corrida que arranca en la 8 en vez de la 7
-> es plausible — hay modelos que no se surten en tallas pequeñas. Una que va de
-> la 7 a la 11 y se salta la 8.5 no tiene lectura comercial, porque la 8.5 es de
-> las que más rotan. De 12 distribuciones observadas, 7 eran curvas y 5 eran la
-> curva estándar con una talla borrada a mano.
-
-### 5.5 Trampas del archivo maestro
-
-Cosas que parecen obvias y no lo son. Todas verificadas:
-
-- **`Total pares` NO incluye `Otras tallas`.** Es la suma de las tallas
-  numeradas y nada más. Cualquier reporte que use esa columna como total
-  subestima el inventario en 9.403 pares.
-- **`Otras tallas` son 9.403 pares sin talla identificable** (WIDE y fuera de
-  corrida 1-13). **16 materiales existen ÚNICAMENTE ahí**: ignorar esa columna
-  los borra del catálogo. Van como variante marcada *pendiente de desglose*.
-- **`Precio PA` cambia de significado según la bodega.** En Bodega Matriz es
-  **nuestro costo**; en las demás es **precio del proveedor**. Verificado: 24 de
-  36 materiales compartidos tienen valores distintos. Mezclarlos corrompe
-  cualquier margen. Van en **campos separados**.
-- **Filas duplicadas por (bodega, material) son lotes parciales** con tallas
-  distintas, no errores. **Se suman.**
-- **`Reserva Otros Terr.` está en cero en todo el archivo.** Es un espacio
-  previsto para cuando la marca aparte inventario para otros distribuidores.
-  Hoy no aparta nada. No es bloqueante — pero el día que deje de ser cero,
-  `Neto Colombia` deja de ser igual a `Total pares` y hay que respetarlo.
-- **`Faltante pares (stock ATS)` sí importa**: 24 líneas y 119 pares donde el
-  pedido superó lo disponible. **La pantalla de pedido debe validarlo en vivo.**
-- Las 3 últimas filas del archivo son totales y notas. Descartar.
-
-### 5.6 Estado del catálogo actual
-
-```
-424 filas · 334 materiales · 3.064 variantes · 123.983 pares
-73 modelos · 207 colores
-
-Género     WOMEN 193 · MEN 168 · CHILDREN 33 · YOUTH 25 · TOTS 5
-Categoría  Boulevard 100 · Waterfront 72 · Trailhead 65 · Kids 63 ·
-           Sin clasificar 19 · UNEEK 15
-
-Margen bruto sobre lo propio: ~70%  ($10.541 costo → $36.775 lista)
-```
-
-**El surtido está roto, y el sistema debe hacerlo visible.** Materiales con 1
-o 2 tallas cubiertas de una corrida de 12, con cientos de pares disponibles en
-la marca. Una corrida rota no se vende: no es que falte mercancía, es que la
-que hay no forma talla completa. **La cobertura de corrida es la métrica que
-decide la reposición**, más que el total de pares.
+Verifica siempre que `sslmode=require` esté activo.
 
 ---
 
-## 6. Modelo de datos
+## 4. Arquitectura Medusa v2 — los tres conceptos que importan
 
-Esquema propio, sin herencia de ningún framework. Nombres en inglés.
+Antes de escribir cualquier feature, ten claros estos tres. Casi todo error de
+diseño en Medusa v2 viene de ignorar uno.
+
+### 4.1 Módulos
+Cada dominio es un paquete aislado con su propio schema y su propio servicio.
+**No existen foreign keys entre módulos.** Un módulo no importa el servicio de
+otro. Si sientes que necesitas hacerlo, necesitas un Link o un Workflow.
+
+### 4.2 Module Links
+La forma de relacionar entidades de módulos distintos sin acoplarlos.
+Se declaran en `src/links/*.ts` y se consultan con `Query` usando `fields`.
+
+Este es el patrón que vamos a repetir para toda entidad custom (Marca,
+Proveedor, Unidad de Medida). **Nunca agregues una columna a un modelo del core
+de Medusa.** Crea tu módulo y enlázalo.
+
+### 4.3 Workflows
+Funciones compuestas de pasos, con compensación (rollback) automática.
+Toda operación que toque más de un módulo **debe** ser un workflow.
+
+Reutiliza los de `@medusajs/medusa/core-flows` antes de escribir uno propio.
+Si escribes uno, **cada step debe tener su función de compensación**. Un step
+sin compensación en un flujo de inventario es un bug esperando a pasar.
+
+---
+
+## 4.5 Frontend: dónde vive la UI
+
+### Decisión de Fase 1: todo dentro del Admin de Medusa
+
+No construimos un frontend Next.js separado en Fase 1. Toda la interfaz vive
+como extensión del Admin, mediante dos mecanismos:
+
+- **UI Routes** (`src/admin/routes/`) — páginas completas nuevas con su propia
+  entrada en la navegación. Aquí van nuestras pantallas de operación:
+  despachos, kardex, alistamiento, cotizaciones.
+- **Widgets** (`src/admin/widgets/`) — bloques inyectados en páginas existentes
+  de Medusa. Aquí va lo que extiende entidades del core: el selector de Marca en
+  la página de producto, el panel de reservas en la orden.
+
+**Razón:** el CRUD de productos, órdenes, inventario, bodegas y clientes ya
+existe y funciona. Reconstruirlo son semanas de trabajo sin valor de negocio.
+Además, en Fase 1 todavía no conocemos los flujos operativos reales del cliente;
+diseñar UI custom antes de eso es diseñar a ciegas.
+
+Esta decisión **no es irreversible**. La API es idéntica en ambos escenarios,
+así que migrar a un frontend propio después se hace pantalla por pantalla, sin
+big bang, conservando el 100% del trabajo de dominio.
+
+### Qué controlamos y qué no
+
+**Control total (no te limites):**
+- Todo el contenido dentro de una UI Route: layout, tipografía, color,
+  componentes, interacciones, animaciones.
+- Toda la lógica de proceso: máquinas de estado, validaciones, aprobaciones,
+  reglas de negocio. Medusa no impone ningún flujo de negocio.
+- Librería de componentes: `@medusajs/ui` está disponible, pero **no es
+  obligatoria**. Tailwind ya está configurado. Si un componente propio queda
+  mejor, hazlo.
+
+**No controlamos:**
+- El shell del admin: sidebar y barra superior. Podemos agregar ítems de
+  navegación e íconos, pero no reemplazar la estructura del marco.
+
+Si en algún momento el cliente exige branding completo del marco, eso es señal
+para abrir la discusión de frontend separado — no lo resuelvas con hacks de CSS
+sobre el shell.
+
+### Criterio para abrir un frontend separado (Fase 2+)
+
+Solo por una de estas tres razones. **"Que se vea mejor" no es razón.**
+
+1. **Usuario no-admin.** Portal donde el cliente consulta pedidos, o el
+   transportista confirma entregas. Esa gente no debe tener acceso al admin.
+2. **Flujo operativo denso.** Pantalla de picking optimizada para escáner de
+   código de barras y tablet en bodega.
+3. **Mobile real.** App de conductores con GPS y firma de entrega.
+
+Las tres son **superficies nuevas**, no reemplazos del admin.
+
+### Guía de diseño para las UI Routes
+
+El objetivo es que nuestras pantallas se sientan intencionales, no como
+formularios genéricos pegados dentro de una plantilla.
+
+- **Densidad de información alta.** Esto es software para gente que lo usa 8
+  horas al día, no una landing. Prioriza ver más datos sin scroll sobre el aire
+  y el espacio en blanco decorativo.
+- **Teclado primero.** Los flujos de alta repetición (alistamiento, ajustes de
+  stock) necesitan atajos y navegación por tab bien pensada. Un bodeguero no
+  debería tocar el mouse.
+- **Estado siempre visible.** En un embudo de despacho, el usuario debe saber en
+  qué etapa está cada pedido sin hacer click. Usa color con significado
+  consistente, no decorativo.
+- **Números tabulares.** Usa `font-variant-numeric: tabular-nums` en toda
+  columna de cantidades, precios o cantidades de stock. Sin esto las cifras
+  bailan y son difíciles de comparar visualmente.
+- **Nada de modales anidados.** Si un flujo necesita dos modales, necesita una
+  página.
+- **Estados vacíos, de carga y de error** son parte del entregable, no un extra.
+  Una pantalla sin estado de error no está terminada.
+- Respeta el modo claro/oscuro del admin. Usa tokens de tema, no colores
+  hardcodeados.
+
+---
+
+## 4.6 Despliegue
+
+**No usamos Vercel para el backend.** Medusa es un servidor Node de larga
+duración: corre subscribers y scheduled jobs fuera del ciclo de request,
+necesita un pool de conexiones persistente, y sirve el admin desde el mismo
+proceso. Nada de eso funciona en serverless.
+
+Arquitectura objetivo:
 
 ```
-operation          país/operación. CO, PE, MX. Moneda, estado.
-brand              marca. Reglas de pedido: unidad (pack/pair).
-size_curve         curva + entries(size_label, size_value, ratio)
-                   ligada a marca. size_value es NUMERIC, no integer.
-
-product            = material. brand, model, gender, category, color,
-                   size_scale, msrp_cents, supplier_price_cents, cost_cents
-variant            = talla. sku, size_label, size_value, is_pending_breakdown
-
-warehouse          bodega. Pertenece a una operación.
-stock              (variant, warehouse) → on_hand, reserved, incoming
-stock_move         kardex. TODA variación de stock deja rastro aquí.
-
-supply_availability  lo que NO es nuestro. variant, source, kind
-                     (SUPPLIER | IN_TRANSIT), eta_days, quantity
-
-purchase_order       cabecera: operation, brand, status, fechas por tramo,
-                     dispatch_ticket
-purchase_order_item  por material: curva aplicada, bultos, ajuste
-purchase_order_size  por talla: requested vs confirmed
-
-customer / sales_order / sales_order_line / reservation / shipment
+Railway (o Render / Fly)
+  ├─ proceso: server   → HTTP API + Admin
+  └─ proceso: worker   → jobs, eventos, colas
+          │
+   ┌──────┴──────┐
+Supabase      Upstash
+(Postgres)    (Redis)
 ```
 
-### Reglas del esquema
-
-- **`operation_id` en toda tabla de negocio.** Sin excepción, desde el día uno.
-  Añadirlo después, con dos países dentro y datos sin marcar, es arqueología.
-- **Dinero en enteros de centavos**, con sufijo `_cents` en el nombre. Nunca
-  floats. La unidad debe ser evidente al leer el código.
-- **`quantity_confirmed` nullable a propósito**: nulo es "sin revisar", cero es
-  "revisado y no hay". Esa diferencia lo es todo al reclamar a la marca.
-- **Cada transición sella su propia fecha.** Con solo `updated_at` es imposible
-  reconstruir cuánto tardó cada tramo, que es de donde sale el lead time real
-  por marca.
-- **Los estados no se guardan si se pueden derivar.** Una columna `etapa` se
-  desincroniza el día que alguien opere por otro camino. Derivar es una vista.
-- **Nada se borra: se anula.** Un pedido es un hecho. Cancelar lo saca del
-  tablero y libera reservas; borrarlo hace irreproducible por qué se pidió lo
-  que se pidió.
+- Ambos procesos corren el mismo código; se diferencian por
+  `MEDUSA_WORKER_MODE` (`server` / `worker`).
+- **Colocar el hosting en la misma región (o la más cercana) que Supabase.**
+  Medusa hace muchas queries por request; latencia cruzada entre regiones se
+  siente de inmediato.
+- Vercel entra solo en Fase 2+, y únicamente para los frontends separados
+  descritos en 4.5.
 
 ---
 
-## 7. Reglas por marca
+## 5. Mapeo dominio → Medusa
 
-Cada marca impone sus condiciones y el sistema debe absorberlas **como datos, no
-como código**:
-
-- Unidad de pedido: bulto cerrado o par suelto
-- Curvas de talla propias
-- Formato del archivo de pedido
-- Lead time típico
-- Reglas de asignación por territorio
-
-**Hoy solo conocemos KEEN.** Cualquier regla que se codifique como constante
-global habrá que rehacerla con la segunda marca. Si dudas, hazla dato.
-
----
-
-## 8. Invariantes — lo que el sistema no puede permitir
-
-Estas son las que justifican que la lógica viva en la base. **Cada una necesita
-su constraint o su función; ninguna se confía al frontend.**
-
-1. **No se puede reservar más de lo disponible.** `reserved <= on_hand`, con
-   check constraint. La reserva se hace en una función transaccional, no con un
-   `select` seguido de un `update`.
-2. **No se puede vender de `supply_availability`.** Es tabla aparte y no tiene
-   reservas. Vender de ahí exige antes una orden de compra recibida.
-3. **Todo movimiento de stock deja rastro en `stock_move`.** El saldo debe poder
-   reconstruirse sumando el kardex. Si no cuadra, hay un camino que se saltó las
-   reglas.
-4. **Un pedido no salta etapas.** De Montado a Despachado sin que la marca
-   confirme cantidades metería en tránsito unidades que nadie verificó.
-5. **Lo que viaja es lo confirmado, no lo pedido.** Usar `requested` en vez de
-   `confirmed` infla el tránsito con unidades que nunca salieron.
-6. **Un SKU es único en todo el catálogo.** Formato `{material}-{escala}{talla}`
-   → `1030343-M8`.
-7. **El total de un pedido cuadra con la suma de sus tallas.** Siempre.
+| Concepto ERP | Módulo Medusa | Notas |
+|---|---|---|
+| Producto / variante | `product` | |
+| Marca | **módulo custom** `brand` + link a `product` | |
+| Bodega | `stock-location` | |
+| Stock por bodega | `inventory` (`InventoryItem` → `InventoryLevel`) | |
+| Reserva de stock | `inventory` (`ReservationItem`) | Ya viene resuelto, no lo reimplementes |
+| Cliente | `customer` + customer groups | |
+| Lista de precios | `pricing` (price lists) | |
+| Cotización | **custom**, sobre `cart` o entidad propia | Decidir en su momento, no ahora |
+| Pedido | `order` | |
+| Despacho | `fulfillment` (fulfillment sets, shipping options, providers) | |
+| Canal / punto de venta | `sales-channel` | Vinculado a stock locations |
 
 ---
 
-## 9. Cómo quiero que trabajes
+## 6. Convenciones de código
+
+### Estructura
+```
+src/
+  modules/          # módulos custom (brand/, uom/, ...)
+    <modulo>/
+      models/
+      service.ts
+      index.ts
+  links/            # module links
+  workflows/        # workflows custom
+    <dominio>/
+      steps/
+      index.ts
+  api/
+    admin/          # rutas admin custom
+    store/
+  admin/            # extensiones de UI
+    widgets/
+    routes/
+  subscribers/      # handlers de eventos
+  jobs/             # scheduled jobs
+  scripts/          # seed, migraciones de datos
+```
+
+### Reglas
+- **TypeScript estricto.** Nada de `any` sin un comentario que justifique por qué.
+- **Español para el dominio de negocio** (labels de UI, mensajes al usuario, docs).
+  **Inglés para el código** (nombres de variables, funciones, modelos, tablas).
+  No mezcles dentro de un mismo identificador.
+- **Dinero en enteros**, en la unidad mínima de la moneda. Nunca floats.
+  Medusa ya lo hace así — respétalo.
+- Nada de lógica de negocio en las rutas API. Las rutas orquestan workflows.
+- Toda mutación de inventario pasa por un workflow. Sin excepciones.
+- Nombres de módulos custom en singular: `brand`, no `brands`.
+
+### Migraciones
+```bash
+npx medusa db:generate <modulo>   # genera migración del módulo
+npx medusa db:migrate             # aplica (usa DIRECT_URL)
+```
+Nunca edites una migración ya aplicada. Genera una nueva.
+
+---
+
+## 7. Cómo quiero que trabajes
 
 1. **Plan antes de código.** Para cualquier tarea de más de un archivo,
-   escríbeme el plan y espera confirmación.
-2. **Incrementos verificables.** Cada paso termina en algo que yo pueda correr y
-   ver. No me entregues 15 archivos de una.
-3. **Verifica contra la base, no contra el log.** "La migración corrió" no es
-   evidencia; "hay 143 tablas y estas 12 existen" sí lo es. Este hábito ya
-   encontró cuatro bugs que el typecheck no veía.
-4. **Consulta la doc oficial antes de asumir una API.** Si la doc y tu memoria
-   difieren, gana la doc.
-5. **Di cuando algo no encaja.** Prefiero un modelo limpio que un abuso de
-   metadata. Y si me equivoco yo, dilo.
+   escríbeme el plan primero y espera confirmación.
+2. **Incrementos verificables.** Cada paso debe terminar en algo que yo pueda
+   correr y ver. No me entregues 15 archivos de una.
+3. **Consulta la doc oficial** (`docs.medusajs.com`) antes de asumir una API.
+   Medusa v2 cambió mucho respecto a v1 y hay bastante contenido desactualizado
+   circulando. Si la doc y tu memoria difieren, gana la doc.
+4. **Di cuando algo no encaja.** Si una parte del dominio ERP no calza bien en
+   el modelo de Medusa, dilo en vez de forzarla. Prefiero un módulo custom
+   limpio que un abuso de metadata.
+5. **No inventes librerías ni endpoints.** Si no estás seguro de que algo
+   existe, verifícalo.
 6. **No mates alcance por tu cuenta.** Si algo es más difícil de lo esperado,
    avísame; no entregues una versión simplificada haciéndola pasar por completa.
-7. **Los datos del negocio se verifican, no se suponen.** Cada afirmación sobre
-   el dominio de §5 salió de contar filas. Mantén ese estándar.
-
-### Convenciones
-
-- **Español** para dominio, UI, mensajes y documentación.
-  **Inglés** para código: variables, funciones, tablas, columnas.
-- TypeScript estricto. Nada de `any` sin un comentario que lo justifique.
-- SQL: una migración por cambio, numerada. **Nunca edites una ya aplicada.**
 
 ---
 
-## 10. Trampas técnicas ya pagadas
+## 8. Estado actual
 
-Cada una costó tiempo real. No las repitas.
+> Actualiza esta sección conforme avancemos.
 
-### Supabase / Postgres
-
-- **Dos conexiones, no una.** Pooler en *transaction mode* (`6543`) para
-  runtime; *session mode* (`5432`) para DDL y migraciones. El transaction pooler
-  rompe prepared statements y las migraciones fallan de forma confusa.
-- **`uselibpqcompat=true` es obligatorio** en la cadena. Desde `pg` 8.16,
-  `sslmode=require` se interpreta como `verify-full` y el certificado del pooler
-  no encadena con las CA del sistema: la conexión muere con
-  `SELF_SIGNED_CERT_IN_CHAIN`. Endurecerlo fijando la CA de Supabase queda
-  pendiente para producción.
-- **La conexión directa (`db.<ref>.supabase.co`) es solo IPv6.** Funciona desde
-  una casa con IPv6 y falla al desplegar donde no lo haya. Usa el pooler.
-- **El prefijo del host del pooler (`aws-0` / `aws-1`) varía por proyecto** y
-  ambos resuelven por DNS. No lo adivines: pruébalo conectando.
-- **Una vista bloquea `ALTER COLUMN`.** Postgres no deja cambiar el tipo de una
-  columna de la que cuelga una vista. Si hay capa de BI, el flujo de migración
-  debe ser: tirar las vistas → migrar → reconstruirlas.
-- **`?::text is null` con cast explícito** en filtros opcionales. Sin el cast,
-  Postgres no puede inferir el tipo de un parámetro nulo y aborta con `42P18`.
-- Toda columna de cantidad y precio: **`numeric`, nunca `real` ni `float`** para
-  dinero. Las medias tallas sí son `numeric`; guardarlas como `integer` redondea
-  7.5 a 8 y colisiona con la talla 8 real.
-
-### Entorno
-
-- **Nada de `node_modules` dentro de OneDrive.** Sincroniza decenas de miles de
-  archivos, toma locks durante los builds y produce `EPERM` intermitentes que
-  parecen bugs de la herramienta.
-- **Windows y MAX_PATH.** Rutas profundas rompen `git checkout`. `git config
-  core.longpaths true`, y clona con sparse-checkout lo que no necesites entero.
-- **Colas y Redis por comando salen caras.** Si en algún momento se usa una cola
-  con workers que sondean, un plan que cobre por comando se agota sin aviso: se
-  consumieron 500.000 comandos en unas horas de servidor de desarrollo. Tarifa
-  fija, o `LISTEN/NOTIFY` de Postgres para volúmenes pequeños.
-
----
-
-## 11. Qué se rescata del trabajo anterior
-
-**Íntegro, sin tocar:**
-
-- `etl/` — transformación del maestro, extracción de curvas, lectura de hojas de
-  pedido. Python y pandas, cero dependencias del stack.
-- `sql/bi/` — vistas de posición, cobertura de corrida, valorización, resumen
-  por talla, embudo. Se adaptan los nombres de tabla; la lógica y las decisiones
-  se conservan.
-- `data/master-data.json` — el catálogo canónico, con cuadre verificado par a
-  par contra el Excel: **123.983 = 123.983**.
-- `Master Data Inventarios.xlsx` y `Formato Pedido Keen.xlsx` — las fuentes.
-
-**Se reescribe:** modelos, API y pantallas.
-
-**Lo más valioso no es código:** es §5. Que ATS no sea inventario. Que la talla
-lleve escala. Que las curvas se separen de los ajustes. Que la operación sea
-dimensión. Eso costó análisis y viaja a cualquier stack.
+- [x] Proyecto Medusa v2 inicializado — v2.18.0, solo backend, layout de §6 en la raíz
+- [x] Supabase conectado (migraciones + runtime verificados) — `AlturaBrands-ERP`, us-east-1.
+      Pooler `aws-0`: 6543 runtime / 5432 migraciones, ambos probados con conexión real.
+      181 migraciones aplicadas, 143 tablas.
+- [x] Redis configurado — los tres módulos (cache, event-bus, workflow-engine)
+      conectan correctamente. **En local se usa memoria, no Redis**: BullMQ
+      sondea sin parar y agotó los 500k comandos del tier gratuito de Upstash en
+      horas. Para desplegar hace falta un Redis de tarifa fija, no por comando.
+- [x] Operación-país como dimensión — módulo `operation`, Colombia (`CO`) dada
+      de alta. Reglas de pedido por marca: KEEN pide en bultos (`order_unit`).
+      Ver §10.
+- [ ] Admin corriendo en local — falta crear usuario y levantar el servidor
+- [x] Módulo `brand` + link a producto — KEEN, 334 productos enlazados
+- [x] Catálogo maestro cargado — 334 productos, 3.064 variantes, 6 categorías,
+      región USD. Fuente: `data/master-data.json`, generado por `etl/`.
+      Los datos de demo del starter fueron purgados.
+- [x] Módulo `supply_availability` poblado — 3.297 filas: 113.447 pares en ATS USA
+      (no vendibles) + 10.268 en tránsito con su ETA. Enlazadas a variante.
+- [x] Bodegas y niveles de inventario — Bodega Matriz, 702 niveles, 268 pares
+      propios y 10.268 en `incoming_quantity`. Cuadre total verificado: 123.983.
+- [x] Capa BI — schema `bi`, vistas de solo lectura. Ver `sql/bi/`.
+      **`pnpm db:migrate` tira y reconstruye este schema**: Postgres no deja
+      alterar una columna de la que cuelga una vista, así que la capa de BI
+      bloqueaba las migraciones. No uses `medusa db:migrate` directo.
+- [x] Curvas de tallas — módulo `size_curve`, 12 curvas de KEEN inferidas del
+      formato de pedido (`etl/extract_size_curves.py`). 5 marcadas con huecos
+      sospechosos, pendientes de validación del negocio.
+- [ ] Seed de datos de prueba
+- [x] Motor de pedidos a marca — módulo `purchase_order`, 4 estados con guardas
+      y compensación, grilla en `/app/pedidos` con curvas y carga de Excel.
+- [x] Embudo de ventas y despacho — tablero en `/app/embudo`. La etapa se
+      **deriva** de los campos nativos de Medusa, no se guarda aparte.
+- [ ] Flujo de venta end-to-end
+- [ ] Embudo de despacho
 
 ---
 
-## 12. Estado actual
+## 9. Primera tarea
 
-- [x] Dominio analizado y verificado contra los archivos reales
-- [x] ETL del maestro con cuadre par a par
-- [x] 7 curvas de talla extraídas y validadas
-- [x] Lectura de hojas de pedido
-- [x] Vistas de BI diseñadas
-- [x] Proyecto Supabase activo (`AlturaBrands-ERP`, us-east-1)
-- [ ] **Esquema propio diseñado y migrado** ← siguiente
-- [ ] RLS y modelo de roles
-- [ ] Funciones transaccionales de inventario y reservas
-- [ ] Carga del catálogo al esquema nuevo
-- [ ] Compras: pedido a marca de punta a punta
-- [ ] Ventas y despacho
-- [ ] Capa BI reconectada
-- [ ] Limpieza del esquema de Medusa
+Inicializa el proyecto y déjalo corriendo contra Supabase. En concreto:
 
-## 13. Primera tarea
+1. `npx create-medusa-app@latest` — **sin storefront**, solo backend + admin.
+2. Configura `.env` con `DATABASE_URL` y `DIRECT_URL` según la sección 3.
+   Déjame un `.env.example` documentado y asegúrate de que `.env` esté en `.gitignore`.
+3. Levanta Redis local vía Docker y configúralo como cache + event bus.
+4. Corre las migraciones y **verifica que hayan pasado realmente** — no asumas.
+5. Crea el usuario admin y confirma que puedes entrar al panel.
+6. Dime exactamente qué comandos correr y qué debería ver en pantalla.
 
-Diseñar el esquema propio. En concreto:
-
-1. Las migraciones SQL de `operation`, `brand`, `size_curve`, `product`,
-   `variant`, `warehouse`, `stock` y `stock_move`, con `operation_id` en todas.
-2. Los constraints que hacen imposibles las violaciones de §8 — no los que las
-   detectan después.
-3. Las políticas RLS y el modelo de roles: operativo por país, y gerencia
-   transversal.
-4. La función de reserva, atómica y a prueba de concurrencia.
-
-Escríbeme el plan antes de tocar nada. **El esquema de Medusa se queda donde
-está hasta que el nuevo funcione**: es la red de seguridad, y borrarlo antes de
-tiempo deja sin punto de retorno.
+No avances a la siguiente tarea hasta que yo confirme que el admin abre.
