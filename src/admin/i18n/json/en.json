@@ -1,0 +1,10 @@
+{
+  "login": {
+    "title": "AlturaBrands",
+    "hint": "Ingresa para acceder al sistema"
+  },
+  "resetPassword": {
+    "resetPassword": "Restablecer contraseña",
+    "resetPasswordHint": "Escribe tu correo y te enviaremos instrucciones"
+  }
+}
