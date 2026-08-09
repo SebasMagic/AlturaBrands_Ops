@@ -94,8 +94,10 @@ const PedidosPage = () => {
   const [genero, setGenero] = useState<string>('')
   const [busqueda, setBusqueda] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [subiendo, setSubiendo] = useState(false)
 
   const bultosRefs = useRef<Record<string, HTMLInputElement | null>>({})
+  const fileRef = useRef<HTMLInputElement | null>(null)
 
   const cargar = useCallback(async () => {
     setCargando(true)
@@ -254,6 +256,62 @@ const PedidosPage = () => {
     }
   }
 
+  /**
+   * Subida de una hoja de pedido armada fuera del sistema.
+   *
+   * Va en dos tiempos a propósito: primero una vista previa que muestra qué
+   * entendió el sistema y qué avisos encontró, y solo si el usuario confirma
+   * se crea el pedido. Importar a ciegas un archivo de 80 líneas y descubrir
+   * después que la mitad se interpretó mal es peor que no importar.
+   */
+  const subirArchivo = async (file: File) => {
+    setSubiendo(true)
+    try {
+      const cuerpo = new FormData()
+      cuerpo.append('file', file)
+
+      const previa = await fetch('/admin/pedidos/importar?dry_run=1', {
+        method: 'POST',
+        credentials: 'include',
+        body: cuerpo,
+      })
+      const datosPrevia = await previa.json()
+      if (!previa.ok) {
+        throw new Error(datosPrevia?.message ?? `El servidor respondió ${previa.status}`)
+      }
+
+      const { resumen, avisos } = datosPrevia
+      const detalle =
+        `${resumen.items} materiales · ${resumen.packs} bultos · ` +
+        `${resumen.pares} pares` +
+        (avisos.length ? `\n${avisos.length} aviso(s):\n· ${avisos.slice(0, 5).join('\n· ')}` : '')
+
+      if (!window.confirm(`Se leyó ${file.name}\n\n${detalle}\n\n¿Crear el pedido?`)) {
+        toast.info('Importación cancelada')
+        return
+      }
+
+      const cuerpo2 = new FormData()
+      cuerpo2.append('file', file)
+      const r = await fetch('/admin/pedidos/importar', {
+        method: 'POST',
+        credentials: 'include',
+        body: cuerpo2,
+      })
+      const creado = await r.json()
+      if (!r.ok) throw new Error(creado?.message ?? `El servidor respondió ${r.status}`)
+
+      toast.success(`Pedido ${creado.code} creado`, {
+        description: `${creado.resumen.items} materiales · ${creado.resumen.pares} pares`,
+      })
+    } catch (e: any) {
+      toast.error('No se pudo importar el archivo', { description: e.message })
+    } finally {
+      setSubiendo(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
   // --- Estados de carga, error y vacío ------------------------------------
   const Marco = ({ children }: { children: React.ReactNode }) => (
     <div className="flex flex-col gap-y-4 p-6">
@@ -363,6 +421,27 @@ const PedidosPage = () => {
               </Badge>
             </Tooltip>
           )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".xlsx,.xls"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              if (f) subirArchivo(f)
+            }}
+          />
+          <Tooltip content="Sube una hoja con el layout de pedido de la marca. Verás una vista previa antes de crear nada.">
+            <Button
+              size="small"
+              variant="secondary"
+              disabled={subiendo}
+              isLoading={subiendo}
+              onClick={() => fileRef.current?.click()}
+            >
+              Cargar archivo
+            </Button>
+          </Tooltip>
           <Button
             size="small"
             disabled={resumen.items === 0 || guardando}
