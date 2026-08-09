@@ -78,6 +78,15 @@ type Linea = {
 
 const num = 'tabular-nums'
 
+/**
+ * Valor centinela para "sin filtro".
+ *
+ * El Select de @medusajs/ui está construido sobre Radix, que PROHÍBE que un
+ * item tenga `value=""` y lanza una excepción al renderizar. Con cadena vacía
+ * la pantalla entera moría con "An unexpected error occurred".
+ */
+const TODOS = '__todos__'
+
 /** Cantidades de una línea: curva × bultos, con los ajustes aplicados encima. */
 function cantidades(linea: Linea | undefined, curva: Curva | undefined) {
   if (!linea || linea.packs <= 0) return linea?.override ?? {}
@@ -93,7 +102,7 @@ const PedidosPage = () => {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lineas, setLineas] = useState<Record<string, Linea>>({})
-  const [genero, setGenero] = useState<string>('')
+  const [genero, setGenero] = useState<string>(TODOS)
   const [busqueda, setBusqueda] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [subiendo, setSubiendo] = useState(false)
@@ -106,7 +115,7 @@ const PedidosPage = () => {
     setError(null)
     try {
       const query: Record<string, string> = {}
-      if (genero) query.genero = genero
+      if (genero && genero !== TODOS) query.genero = genero
       if (busqueda.trim()) query.q = busqueda.trim()
       const d = await sdk.client.fetch<Respuesta>('/admin/pedidos/catalogo', {
         query,
@@ -303,7 +312,14 @@ const PedidosPage = () => {
   }
 
   // --- Estados de carga, error y vacío ------------------------------------
-  const Marco = ({ children }: { children: React.ReactNode }) => (
+  /**
+   * Función que devuelve JSX, NO un componente.
+   *
+   * Declarar un componente dentro de otro crea un tipo nuevo en cada render:
+   * React desmonta y vuelve a montar todo el subárbol, y los campos pierden el
+   * foco a cada tecla. En una grilla de captura eso la vuelve inusable.
+   */
+  const marco = (children: React.ReactNode) => (
     <div className="flex flex-col gap-y-4 p-6">
       <div className="flex items-baseline justify-between gap-x-4">
         <div>
@@ -319,30 +335,30 @@ const PedidosPage = () => {
   )
 
   if (cargando && !data) {
-    return (
-      <Marco>
+    return marco(
+      <>
         <div className="bg-ui-bg-base border-ui-border-base rounded-lg border p-8">
           <Text className="text-ui-fg-subtle">Cargando catálogo…</Text>
         </div>
-      </Marco>
+      </>
     )
   }
 
   if (error) {
-    return (
-      <Marco>
+    return marco(
+      <>
         <div className="bg-ui-bg-base border-ui-border-error rounded-lg border p-8">
           <Text className="text-ui-fg-error mb-3">{error}</Text>
           <Button size="small" variant="secondary" onClick={cargar}>
             Reintentar
           </Button>
         </div>
-      </Marco>
+      </>
     )
   }
 
-  return (
-    <Marco>
+  return marco(
+    <>
       {/* --- Filtros y resumen --- */}
       <div className="flex flex-wrap items-end gap-3">
         <div className="w-64">
@@ -365,7 +381,7 @@ const PedidosPage = () => {
               <Select.Value placeholder="Todos" />
             </Select.Trigger>
             <Select.Content>
-              <Select.Item value="">Todos</Select.Item>
+              <Select.Item value={TODOS}>Todos</Select.Item>
               {['MEN', 'WOMEN', 'CHILDREN', 'YOUTH', 'TOTS'].map((g) => (
                 <Select.Item key={g} value={g}>
                   {g}
@@ -620,7 +636,7 @@ const PedidosPage = () => {
         piden más de lo que hay en el proveedor · las naranjas se editaron a
         mano
       </Text>
-    </Marco>
+    </>
   )
 }
 
