@@ -1,0 +1,1941 @@
+{
+  "meta": {
+    "origen": "Formato Pedido Keen.xlsx",
+    "items": 35,
+    "packs": 85,
+    "pares": 901,
+    "items_ajustados": 17
+  },
+  "operation_code": "CO",
+  "brand_code": "KEEN",
+  "currency_code": "usd",
+  "items": [
+    {
+      "material_code": "1032554",
+      "description": "JASPER MERKO M-BLACK/BLACK",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 1,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3500,
+      "sizes": [
+        {
+          "sku": "1032554-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032554-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032554-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032554-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032554-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032554-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032554-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032554-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032554-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1031790",
+      "description": "JASPER ZIONIC M-DARK OLIVE/KHAKI",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 3,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7",
+      "unit_cost_cents": 4800,
+      "sizes": [
+        {
+          "sku": "1031790-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031790-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031790-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031790-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031790-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031790-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031790-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031790-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 3
+        }
+      ]
+    },
+    {
+      "material_code": "1032645",
+      "description": "JASPER ZIONIC M-CHIPMUNK/HUCKLEBERRY",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 3,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5",
+      "unit_cost_cents": 4800,
+      "sizes": [
+        {
+          "sku": "1032645-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1032645-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1032645-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1032645-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1032645-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1032645-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1032645-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 3
+        }
+      ]
+    },
+    {
+      "material_code": "1032795",
+      "description": "JASPER ZIONIC WP M-BLACK/BLACK",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 4,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 10.5",
+      "unit_cost_cents": 5200,
+      "sizes": [
+        {
+          "sku": "1032795-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032795-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032795-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032795-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032795-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032795-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032795-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032795-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 4
+        }
+      ]
+    },
+    {
+      "material_code": "1029593",
+      "description": "KS86 M-BLACK/BIRCH",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 3,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3350,
+      "sizes": [
+        {
+          "sku": "1029593-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1029593-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1029593-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1029593-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1029593-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1029593-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1029593-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1029593-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1029593-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 3
+        }
+      ]
+    },
+    {
+      "material_code": "1031824",
+      "description": "KS86 LEA M-BIRCH/STAR WHITE",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 3,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5",
+      "unit_cost_cents": 3900,
+      "sizes": [
+        {
+          "sku": "1031824-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031824-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031824-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031824-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031824-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031824-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1031824-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 3
+        }
+      ]
+    },
+    {
+      "material_code": "1030343",
+      "description": "HIGHTRAIL MID WP M-BRINDLE/OAK BUFF",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 4975,
+      "sizes": [
+        {
+          "sku": "1030343-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030343-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030343-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030343-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030343-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030343-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030343-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030343-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030343-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1031842",
+      "description": "HIGHTRAIL WP M-FOREST NIGHT/DARK OLIVE",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5, 8",
+      "unit_cost_cents": 2700,
+      "sizes": [
+        {
+          "sku": "1031842-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031842-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031842-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031842-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031842-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031842-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1032054",
+      "description": "TARGHEE APEX MID WP M-DARK OLIVE/KHAKI",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 5850,
+      "sizes": [
+        {
+          "sku": "1032054-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032054-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032054-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032054-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032054-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032054-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032054-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032054-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032054-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1032033",
+      "description": "TARGHEE APEX WP M-BLACK/ABBEY STONE",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5",
+      "unit_cost_cents": 5550,
+      "sizes": [
+        {
+          "sku": "1032033-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032033-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032033-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032033-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032033-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032033-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032033-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1032287",
+      "description": "TARGHEE APEX WP M-BRINDLE/CANTEEN",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 1,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 5550,
+      "sizes": [
+        {
+          "sku": "1032287-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032287-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032287-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032287-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032287-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032287-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032287-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032287-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032287-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1028988",
+      "description": "TARGHEE IV MID WP M-BISON/BLACK",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7",
+      "unit_cost_cents": 5350,
+      "sizes": [
+        {
+          "sku": "1028988-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028988-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028988-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1028988-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1028988-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1028988-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028988-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028988-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1031773",
+      "description": "TARGHEE IV MID WP M-JAVA/BRINDLE",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5",
+      "unit_cost_cents": 5350,
+      "sizes": [
+        {
+          "sku": "1031773-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031773-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031773-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031773-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031773-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031773-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031773-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1028998",
+      "description": "TARGHEE IV VENT M-BISON/GOLDEN YELLOW",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 1,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5, 8",
+      "unit_cost_cents": 5100,
+      "sizes": [
+        {
+          "sku": "1028998-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028998-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028998-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028998-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1028998-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1028998-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1028997",
+      "description": "TARGHEE IV WP M-BISON/BLACK",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 5050,
+      "sizes": [
+        {
+          "sku": "1028997-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028997-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028997-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028997-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1028997-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1028997-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1028997-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028997-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028997-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1030691",
+      "description": "TARGHEE IV WP M-SEA TURTLE/ROASTED PECAN",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7.5, 8",
+      "unit_cost_cents": 5050,
+      "sizes": [
+        {
+          "sku": "1030691-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030691-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030691-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030691-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030691-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030691-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030691-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1014097",
+      "description": "UNEEK M-BLACK/BLACK",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 5,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7, 7.5, 8.5",
+      "unit_cost_cents": 3500,
+      "sizes": [
+        {
+          "sku": "1014097-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1014097-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 10
+        },
+        {
+          "sku": "1014097-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 10
+        },
+        {
+          "sku": "1014097-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1014097-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1014097-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 5
+        }
+      ]
+    },
+    {
+      "material_code": "1025169",
+      "description": "UNEEK M-TIMBERWOLF/PLAZA TAUPE",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 5,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7.5",
+      "unit_cost_cents": 3500,
+      "sizes": [
+        {
+          "sku": "1025169-M7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1025169-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1025169-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 10
+        },
+        {
+          "sku": "1025169-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 10
+        },
+        {
+          "sku": "1025169-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 10
+        },
+        {
+          "sku": "1025169-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1025169-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 5
+        },
+        {
+          "sku": "1025169-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 5
+        }
+      ]
+    },
+    {
+      "material_code": "1032783",
+      "description": "UNEEK TREKKER M-BLACK/KEEN MAPLE",
+      "size_curve_code": "KEEN-M-01",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 7",
+      "unit_cost_cents": 4600,
+      "sizes": [
+        {
+          "sku": "1032783-M7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032783-M8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032783-M8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032783-M9",
+          "size_label": "9",
+          "size_value": 9.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032783-M9.5",
+          "size_label": "9.5",
+          "size_value": 9.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032783-M10",
+          "size_label": "10",
+          "size_value": 10.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032783-M10.5",
+          "size_label": "10.5",
+          "size_value": 10.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032783-M11",
+          "size_label": "11",
+          "size_value": 11.0,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1030557",
+      "description": "JASPER W-BIRCH/BLACK",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 2,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 5",
+      "unit_cost_cents": 3550,
+      "sizes": [
+        {
+          "sku": "1030557-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030557-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030557-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030557-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1030557-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030557-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030557-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1032555",
+      "description": "JASPER MERKO W-BIRCH/PLAZA TAUPE",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 1,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 5",
+      "unit_cost_cents": 3500,
+      "sizes": [
+        {
+          "sku": "1032555-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032555-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032555-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032555-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1032555-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032555-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1032555-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1032665",
+      "description": "JASPER ZIONIC W-CHIPMUNK/SYMPHONIC SUNSE",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 4,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 4800,
+      "sizes": [
+        {
+          "sku": "1032665-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032665-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032665-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 12
+        },
+        {
+          "sku": "1032665-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032665-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032665-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        }
+      ]
+    },
+    {
+      "material_code": "1032668",
+      "description": "JASPER ZIONIC W-DESERT SAGE/LEMON GRASS",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 4,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 4800,
+      "sizes": [
+        {
+          "sku": "1032668-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032668-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032668-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 12
+        },
+        {
+          "sku": "1032668-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032668-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032668-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        }
+      ]
+    },
+    {
+      "material_code": "1032669",
+      "description": "JASPER ZIONIC W-BRINDLE/BIRCH",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 4,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 4800,
+      "sizes": [
+        {
+          "sku": "1032669-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032669-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032669-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 12
+        },
+        {
+          "sku": "1032669-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1032669-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032669-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        }
+      ]
+    },
+    {
+      "material_code": "1030348",
+      "description": "HIGHTRAIL MID WP W-SAFARI/CHIPMUNK",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 4975,
+      "sizes": [
+        {
+          "sku": "1030348-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030348-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030348-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030348-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030348-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1030348-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1030348-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030348-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1030349",
+      "description": "HIGHTRAIL WP W-ROASTED PECAN/CHIPMUNK",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 1,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 2700,
+      "sizes": [
+        {
+          "sku": "1030349-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1030349-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1030349-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1030349-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030349-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1030349-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1030349-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1030349-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1029000",
+      "description": "TARGHEE IV VENT W-ALLOY/GRANITE GREEN",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 1,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 5.5",
+      "unit_cost_cents": 5100,
+      "sizes": [
+        {
+          "sku": "1029000-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1029000-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1029000-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1029000-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1029000-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1029000-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1029000-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1028992",
+      "description": "TARGHEE IV WP W-ALLOY/GRANITE GREEN",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 1,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 5050,
+      "sizes": [
+        {
+          "sku": "1028992-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1028992-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028992-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 3
+        },
+        {
+          "sku": "1028992-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1028992-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 1
+        },
+        {
+          "sku": "1028992-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 1
+        }
+      ]
+    },
+    {
+      "material_code": "1032232",
+      "description": "TARGHEE IV WP W-STEEL GREY/LILY PAD",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 5050,
+      "sizes": [
+        {
+          "sku": "1032232-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032232-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032232-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1032232-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1032232-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1032232-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1018698",
+      "description": "UNEEK W-WHITE CAP/CORNSTALK",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 4,
+      "is_adjusted": true,
+      "adjustment_note": "Se quitaron las tallas 5.5",
+      "unit_cost_cents": 3500,
+      "sizes": [
+        {
+          "sku": "1018698-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1018698-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1018698-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1018698-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 12
+        },
+        {
+          "sku": "1018698-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1018698-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1018698-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        }
+      ]
+    },
+    {
+      "material_code": "1027291",
+      "description": "UNEEK ASTORIA W-BIRCH/SILVER BIRCH",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 4,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3600,
+      "sizes": [
+        {
+          "sku": "1027291-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1027291-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1027291-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 12
+        },
+        {
+          "sku": "1027291-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 8
+        },
+        {
+          "sku": "1027291-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1027291-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 4
+        }
+      ]
+    },
+    {
+      "material_code": "1022810",
+      "description": "WHISPER W-TAUPE/CORAL",
+      "size_curve_code": "KEEN-W-01",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3150,
+      "sizes": [
+        {
+          "sku": "1022810-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1022810-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1022810-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1022810-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1022810-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1022810-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1022814",
+      "description": "WHISPER W-MEDIUM GREY/PEACOCK GREEN",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3150,
+      "sizes": [
+        {
+          "sku": "1022814-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1022814-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1022814-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1022814-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1022814-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1022814-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1022814-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1022814-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1031980",
+      "description": "WHISPER LATTICE W-LILY PAD/PLAZA TAUPE",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3150,
+      "sizes": [
+        {
+          "sku": "1031980-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031980-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031980-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031980-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031980-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031980-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031980-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031980-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    },
+    {
+      "material_code": "1031958",
+      "description": "WHISPER LITE W-SAFARI/BIRCH",
+      "size_curve_code": "KEEN-W-02",
+      "packs": 2,
+      "is_adjusted": false,
+      "adjustment_note": null,
+      "unit_cost_cents": 3200,
+      "sizes": [
+        {
+          "sku": "1031958-W5",
+          "size_label": "5",
+          "size_value": 5.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031958-W5.5",
+          "size_label": "5.5",
+          "size_value": 5.5,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031958-W6",
+          "size_label": "6",
+          "size_value": 6.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031958-W6.5",
+          "size_label": "6.5",
+          "size_value": 6.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031958-W7",
+          "size_label": "7",
+          "size_value": 7.0,
+          "quantity_requested": 6
+        },
+        {
+          "sku": "1031958-W7.5",
+          "size_label": "7.5",
+          "size_value": 7.5,
+          "quantity_requested": 4
+        },
+        {
+          "sku": "1031958-W8",
+          "size_label": "8",
+          "size_value": 8.0,
+          "quantity_requested": 2
+        },
+        {
+          "sku": "1031958-W8.5",
+          "size_label": "8.5",
+          "size_value": 8.5,
+          "quantity_requested": 2
+        }
+      ]
+    }
+  ]
+}
