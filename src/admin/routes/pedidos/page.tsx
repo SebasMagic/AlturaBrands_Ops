@@ -13,6 +13,10 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { sdk } from '../../lib/sdk'
+// Se importa desde aquí porque las extensiones del admin no tienen un punto de
+// entrada global: Vite empaqueta este CSS con el resto y acaba aplicándose a
+// todo el admin, incluida la pantalla de acceso. Ver el aviso del archivo.
+import '../../styles/branding.css'
 
 /**
  * Grilla de armado de pedido a marca.
