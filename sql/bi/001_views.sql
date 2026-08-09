@@ -177,6 +177,7 @@ select
     k.operacion,
     d.sku,
     d.material,
+    d.producto,
     d.marca,
     d.categoria,
     d.modelo,

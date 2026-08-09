@@ -1,5 +1,6 @@
 import { createWorkflow, WorkflowResponse } from '@medusajs/framework/workflows-sdk'
 
+import { createOrderStep, type CreateOrderInput } from './steps/create-order'
 import { createTransitStockStep } from './steps/create-transit-stock'
 import { setStatusStep } from './steps/set-status'
 import { validateTransitionStep } from './steps/validate-transition'
@@ -8,6 +9,15 @@ import { validateTransitionStep } from './steps/validate-transition'
  * Transiciones del pedido a marca. Toda operación que toque más de un módulo
  * es un workflow, y cada step lleva su compensación (CLAUDE.md §4.3).
  */
+
+// --- Crear el pedido (queda en Montado) -------------------------------------
+export const createPurchaseOrderWorkflow = createWorkflow(
+  'create-purchase-order',
+  (input: CreateOrderInput) => {
+    const res = createOrderStep(input)
+    return new WorkflowResponse(res)
+  }
+)
 
 // --- Montado -> Cantidad Check/Ajustado -------------------------------------
 export const checkQuantitiesWorkflow = createWorkflow(
