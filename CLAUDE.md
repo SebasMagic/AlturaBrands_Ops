@@ -347,6 +347,10 @@ Nunca edites una migración ya aplicada. Genera una nueva.
       formato de pedido (`etl/extract_size_curves.py`). 5 marcadas con huecos
       sospechosos, pendientes de validación del negocio.
 - [ ] Seed de datos de prueba
+- [x] Motor de pedidos a marca — módulo `purchase_order`, 4 estados con guardas
+      y compensación, grilla en `/app/pedidos` con curvas y carga de Excel.
+- [x] Embudo de ventas y despacho — tablero en `/app/embudo`. La etapa se
+      **deriva** de los campos nativos de Medusa, no se guarda aparte.
 - [ ] Flujo de venta end-to-end
 - [ ] Embudo de despacho
 
