@@ -20,7 +20,16 @@ const databaseUrl = isMigration
   ? process.env.DIRECT_URL
   : process.env.DATABASE_URL
 
-if (!databaseUrl) {
+/**
+ * `medusa build` compila el admin y el servidor; no abre ninguna conexión.
+ * Exigir la cadena aquí rompía el build en despliegue, donde las variables se
+ * inyectan al arrancar el contenedor y no al construir la imagen.
+ *
+ * La guarda sigue existiendo, pero en el momento que importa: al arrancar.
+ */
+const isBuild = process.argv.includes('build')
+
+if (!databaseUrl && !isBuild) {
   throw new Error(
     isMigration
       ? 'Falta DIRECT_URL (session mode, puerto 5432). Requerida para migraciones — CLAUDE.md §3.'
