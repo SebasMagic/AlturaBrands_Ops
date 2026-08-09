@@ -118,6 +118,8 @@ module.exports = defineConfig({
     { resolve: './src/modules/brand' },
     { resolve: './src/modules/size-curve' },
     { resolve: './src/modules/purchase-order' },
+    { resolve: './src/modules/goods-receipt' },
+    { resolve: './src/modules/stock-ledger' },
     { resolve: './src/modules/supply-availability' },
   ],
 })
