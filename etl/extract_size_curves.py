@@ -67,11 +67,57 @@ def main():
         curvas[clave]["modelos"].add(r.get("Modelo"))
         curvas[clave]["generos"].add(genero)
 
-    print(f"Curvas distintas encontradas: {len(curvas)}")
+    print(f"Distribuciones distintas encontradas: {len(curvas)}")
     if descartadas:
         print(f"Filas descartadas (no son multiplo exacto): {len(descartadas)}")
         for m, g, b in descartadas[:3]:
             print(f"  {m} {g} bultos={b}")
+
+    # --- Separar curvas base de pedidos ajustados --------------------------
+    # El criterio es el HUECO INTERNO, no la longitud de la corrida.
+    #
+    # Una corrida mas corta que arranca en la 8 en vez de la 7 es plausible:
+    # hay modelos que simplemente no se surten en tallas pequeñas. Pero una
+    # que va de la 7 a la 11 y se salta la 8.5 no tiene lectura comercial: la
+    # 8.5 es de las que mas rotan. Eso es alguien que borro una celda al
+    # montar el pedido, y su sitio es el ajuste de la linea, no el maestro.
+    def tiene_hueco_interno(entradas):
+        valores = sorted(float(s) for s, _ in entradas)
+        esperadas = []
+        v = valores[0]
+        while v <= valores[-1] + 1e-9:
+            esperadas.append(round(v, 1))
+            v += 0.5
+        return len(valores) != len(esperadas)
+
+    base, ajustadas = [], []
+    for clave, info in sorted(curvas.items(), key=lambda x: -x[1]["usos"]):
+        (ajustadas if tiene_hueco_interno(clave[1]) else base).append((clave, info))
+
+    print(f"\n  curvas base                    : {len(base)}")
+    print(f"  distribuciones con hueco interno: {len(ajustadas)}  "
+          f"(son pedidos ajustados, no curvas)")
+
+    for clave, info in ajustadas:
+        receta = dict(clave[1])
+        modelos = ", ".join(sorted(m for m in info["modelos"] if isinstance(m, str)))
+        # Contra que curva base se ajusto, para dejarlo documentado
+        origen = "?"
+        quitadas = []
+        for clave_b, _ in base:
+            if clave_b[0] != clave[0]:
+                continue
+            receta_b = dict(clave_b[1])
+            if set(receta) - set(receta_b):
+                continue
+            if all(receta[k] == receta_b[k] for k in receta):
+                origen = "base"
+                quitadas = sorted(set(receta_b) - set(receta), key=float)
+                break
+        detalle = f"quito {', '.join(quitadas)}" if quitadas else "no deriva de ninguna base"
+        print(f"    - {modelos}: {detalle}")
+
+    curvas = dict(base)
 
     # Codigo estable: escala + orden por frecuencia de uso
     por_escala = defaultdict(list)

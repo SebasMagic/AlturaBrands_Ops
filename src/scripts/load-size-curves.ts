@@ -107,12 +107,37 @@ export default async function loadSizeCurves({ container }: ExecArgs) {
   }
   logger.info(`Curvas creadas: ${creadas} · refrescadas: ${refrescadas}`)
 
+  // Curvas que ya no vienen en el origen: se desactivan, no se borran. Un
+  // pedido pasado pudo usarlas, y perder esa referencia haría irreproducible
+  // por qué se pidió lo que se pidió.
+  const enOrigen = new Set(curvas.map((c) => c.code))
+  const sobrantes = existentes.filter((c: any) => !enOrigen.has(c.code))
+  if (sobrantes.length) {
+    for (const s of sobrantes) {
+      await curveService.updateSizeCurves({ id: s.id, is_active: false })
+    }
+    logger.info(
+      `Desactivadas (ya no están en el origen): ${sobrantes
+        .map((s: any) => s.code)
+        .join(', ')}`
+    )
+  }
+
   // --- Verificación ------------------------------------------------------
+  // Solo las activas: las desactivadas se conservan por trazabilidad y no
+  // deben contar contra lo que trae el origen.
   const todas = await curveService.listSizeCurves(
-    {},
+    { is_active: true },
     { select: ['id', 'code', 'scale', 'pairs_per_pack', 'is_default'] }
   )
-  const entries = await curveService.listSizeCurveEntries({}, { select: ['id', 'ratio'] })
+  const inactivas = await curveService.listSizeCurves(
+    { is_active: false },
+    { select: ['id', 'code'] }
+  )
+  const entries = await curveService.listSizeCurveEntries(
+    { curve_id: todas.map((c: any) => c.id) },
+    { select: ['id'] }
+  )
 
   const esperadoEntries = curvas.reduce((a, c) => a + c.entries.length, 0)
   const esperadoPares = curvas.reduce((a, c) => a + c.pairs_per_pack, 0)
@@ -122,9 +147,10 @@ export default async function loadSizeCurves({ container }: ExecArgs) {
 
   logger.info('')
   logger.info('--- Verificación ---')
-  logger.info(`Curvas          : ${todas.length}  ${ok(todas.length, curvas.length)}`)
+  logger.info(`Curvas activas  : ${todas.length}  ${ok(todas.length, curvas.length)}`)
   logger.info(`Tallas (entries): ${entries.length}  ${ok(entries.length, esperadoEntries)}`)
   logger.info(`Suma pares/bulto: ${realPares}  ${ok(realPares, esperadoPares)}`)
+  logger.info(`Inactivas       : ${inactivas.length} (conservadas por trazabilidad)`)
 
   const porEscala: Record<string, number> = {}
   todas.forEach((c: any) => {
