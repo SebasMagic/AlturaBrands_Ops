@@ -7,9 +7,16 @@ import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils'
 /**
  * Asocia las fotos de producto al catálogo.
  *
- * Fuente: data/imagenes-productos.json, producido por el cruce del CSV de
- * Shopify contra el maestro. Ese CSV no trae SKU ni material, así que la
- * pareja se hizo por modelo + color + género — ver el script del ETL.
+ * Dos fuentes, en este orden de preferencia:
+ *
+ *   1. data/imagenes-productos.json — cruce del CSV de la tienda Shopify
+ *      contra el maestro. Ese CSV no trae SKU ni material, así que la pareja
+ *      se hizo por modelo + color + género.
+ *   2. data/imagenes-keen.json — cruce contra el catálogo público de KEEN
+ *      (etl/emparejar-fotos-keen.js), por género + color.
+ *
+ * La primera manda si un material aparece en las dos: son las fotos que el
+ * negocio ya venía usando y están validadas.
  *
  * Las URLs apuntan al CDN de Shopify. Funcionan hoy, pero son de un dominio
  * que no controlamos: si esa tienda cierra, las fotos desaparecen sin aviso.
@@ -27,25 +34,54 @@ type Emparejado = {
   modelo: string
   color: string
   genero: string
-  score: number
   imagenes: string[]
 }
 
 const LOTE = 20
 
+/** En orden de preferencia: la primera fuente que traiga un material, gana. */
+const FUENTES = ['imagenes-productos.json', 'imagenes-keen.json']
+
 export default async function loadProductImages({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const productService = container.resolve(Modules.PRODUCT)
 
-  const jsonPath = path.join(process.cwd(), 'data', 'imagenes-productos.json')
-  if (!fs.existsSync(jsonPath)) {
-    throw new Error(
-      `No existe ${jsonPath}. Genera el cruce antes con el script de ETL.`
+  const porMaterialFuente = new Map<string, Emparejado>()
+  let algunaFuente = false
+
+  for (const fuente of FUENTES) {
+    const jsonPath = path.join(process.cwd(), 'data', fuente)
+    if (!fs.existsSync(jsonPath)) {
+      logger.warn(`Fuente ausente, se omite: ${fuente}`)
+      continue
+    }
+    algunaFuente = true
+
+    const lote: Emparejado[] = JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
+    let nuevos = 0
+    for (const e of lote) {
+      if (!e.imagenes?.length) continue
+      // La primera fuente manda: no se pisa lo ya cargado.
+      if (porMaterialFuente.has(e.material)) continue
+      porMaterialFuente.set(e.material, e)
+      nuevos++
+    }
+    logger.info(
+      `${fuente}: ${lote.length} materiales, ${nuevos} aportados, ` +
+        `${lote.reduce((a, e) => a + (e.imagenes?.length ?? 0), 0)} imágenes`
     )
   }
-  const emparejados: Emparejado[] = JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
+
+  if (!algunaFuente) {
+    throw new Error(
+      `No hay ninguna fuente en data/ (${FUENTES.join(', ')}). ` +
+        'Genera el cruce antes con los scripts de etl/.'
+    )
+  }
+
+  const emparejados = [...porMaterialFuente.values()]
   logger.info(
-    `Origen: ${emparejados.length} materiales con foto, ` +
+    `Total a cargar: ${emparejados.length} materiales, ` +
       `${emparejados.reduce((a, e) => a + e.imagenes.length, 0)} imágenes`
   )
 

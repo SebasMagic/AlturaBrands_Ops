@@ -1,0 +1,69 @@
+{
+  "sinCandidato": [
+    {
+      "material": "1014456",
+      "modelo": "CLEARWATER CNX",
+      "color": "RAVEN/TORTOISE SHELL",
+      "genero": "MEN",
+      "categoria": "",
+      "descripcion": "CLEARWATER CNX M-RAVEN/TORTOISE SHELL",
+      "por_pedir": 466,
+      "en_bodega": 0,
+      "en_transito": 0
+    },
+    {
+      "material": "1030723",
+      "modelo": "HYPERPORT FISHERMAN LEATHER",
+      "color": "BRINDLE/OA",
+      "genero": "MEN",
+      "categoria": "",
+      "descripcion": "HYPERPORT FISHERMAN LEATHER M-BRINDLE/OA",
+      "por_pedir": 0,
+      "en_bodega": 3,
+      "en_transito": 0
+    },
+    {
+      "material": "1030722",
+      "modelo": "HYPERPORT FISHERMAN LEATHER",
+      "color": "DARK OLIVE",
+      "genero": "MEN",
+      "categoria": "",
+      "descripcion": "HYPERPORT FISHERMAN LEATHER M-DARK OLIVE",
+      "por_pedir": 0,
+      "en_bodega": 3,
+      "en_transito": 0
+    }
+  ],
+  "sinModelo": [
+    {
+      "material": "1031824",
+      "modelo": "KS86 LEA",
+      "color": "BIRCH/STAR WHITE",
+      "genero": "MEN",
+      "categoria": "",
+      "descripcion": "KS86 LEA M-BIRCH/STAR WHITE",
+      "por_pedir": 530,
+      "en_bodega": 0,
+      "en_transito": 0,
+      "vistos": [
+        "Men's UNEEK O3 Sneaker Sandal  |  Birch/Star White"
+      ]
+    },
+    {
+      "material": "1033306",
+      "modelo": "TARGHEE APEX WP WIDE",
+      "color": "BRINDLE/CANTEEN",
+      "genero": "MEN",
+      "categoria": "",
+      "descripcion": "TARGHEE APEX WP WIDE M-BRINDLE/CANTEEN",
+      "por_pedir": 405,
+      "en_bodega": 0,
+      "en_transito": 0,
+      "vistos": [
+        "Men's Newport H2 Sandal  |  Brindle/Canteen",
+        "Men's Targhee Apex Waterproof Hiking Shoe  |  Brindle/Canteen"
+      ]
+    }
+  ],
+  "ambiguos": []
+}

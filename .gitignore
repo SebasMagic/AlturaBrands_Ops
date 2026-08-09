@@ -26,3 +26,7 @@ build
 .medusa
 # Salida regenerable del ETL (deterministica desde el xlsx, que si esta versionado)
 data/master-data.json
+
+# Cache del catálogo público de KEEN: se regenera con etl/descargar-catalogo-keen.js
+# y queda obsoleto en cuanto la marca publica novedades.
+data/keen-catalogo.json
