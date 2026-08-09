@@ -25,6 +25,8 @@ const DEMO_CATEGORY_HANDLES = ['shirts', 'sweatshirts', 'pants', 'merch']
 // La región de demo está en EUR. El catálogo maestro viene en USD, así que
 // esta región no sirve para nada y solo confundiría al elegir moneda.
 const DEMO_REGIONS = ['Europe']
+const DEMO_CHANNELS = ['Default Sales Channel']
+const DEMO_PROFILES = ['Default Shipping Profile']
 
 export default async function purgeDemoData({ container }: ExecArgs) {
   const logger = container.resolve('logger')
