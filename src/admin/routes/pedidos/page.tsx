@@ -12,6 +12,8 @@ import {
 } from '@medusajs/ui'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { sdk } from '../../lib/sdk'
+
 /**
  * Grilla de armado de pedido a marca.
  *
@@ -103,14 +105,13 @@ const PedidosPage = () => {
     setCargando(true)
     setError(null)
     try {
-      const params = new URLSearchParams()
-      if (genero) params.set('genero', genero)
-      if (busqueda.trim()) params.set('q', busqueda.trim())
-      const r = await fetch(`/admin/pedidos/catalogo?${params}`, {
-        credentials: 'include',
+      const query: Record<string, string> = {}
+      if (genero) query.genero = genero
+      if (busqueda.trim()) query.q = busqueda.trim()
+      const d = await sdk.client.fetch<Respuesta>('/admin/pedidos/catalogo', {
+        query,
       })
-      if (!r.ok) throw new Error(`El servidor respondió ${r.status}`)
-      setData(await r.json())
+      setData(d)
     } catch (e: any) {
       setError(e.message ?? 'No se pudo cargar el catálogo')
     } finally {
@@ -232,19 +233,15 @@ const PedidosPage = () => {
         })
         .filter((i) => i.sizes.length > 0)
 
-      const r = await fetch('/admin/pedidos', {
+      const creado = await sdk.client.fetch<{ code: string }>('/admin/pedidos', {
         method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           operation_code: data?.operacion,
           brand_code: data?.marca,
           currency_code: 'usd',
           items,
-        }),
+        },
       })
-      if (!r.ok) throw new Error(`El servidor respondió ${r.status}`)
-      const creado = await r.json()
       toast.success(`Pedido ${creado.code} creado`, {
         description: `${resumen.items} materiales · ${resumen.pares} pares`,
       })
@@ -270,15 +267,11 @@ const PedidosPage = () => {
       const cuerpo = new FormData()
       cuerpo.append('file', file)
 
-      const previa = await fetch('/admin/pedidos/importar?dry_run=1', {
+      const datosPrevia = await sdk.client.fetch<any>('/admin/pedidos/importar', {
         method: 'POST',
-        credentials: 'include',
+        query: { dry_run: '1' },
         body: cuerpo,
       })
-      const datosPrevia = await previa.json()
-      if (!previa.ok) {
-        throw new Error(datosPrevia?.message ?? `El servidor respondió ${previa.status}`)
-      }
 
       const { resumen, avisos } = datosPrevia
       const detalle =
@@ -293,13 +286,10 @@ const PedidosPage = () => {
 
       const cuerpo2 = new FormData()
       cuerpo2.append('file', file)
-      const r = await fetch('/admin/pedidos/importar', {
+      const creado = await sdk.client.fetch<any>('/admin/pedidos/importar', {
         method: 'POST',
-        credentials: 'include',
         body: cuerpo2,
       })
-      const creado = await r.json()
-      if (!r.ok) throw new Error(creado?.message ?? `El servidor respondió ${r.status}`)
 
       toast.success(`Pedido ${creado.code} creado`, {
         description: `${creado.resumen.items} materiales · ${creado.resumen.pares} pares`,

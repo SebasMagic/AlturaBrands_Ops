@@ -3,6 +3,8 @@ import { Funnel } from '@medusajs/icons'
 import { Badge, Button, Heading, Text, Tooltip } from '@medusajs/ui'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { sdk } from '../../lib/sdk'
+
 /**
  * Embudo de ventas y despacho.
  *
@@ -70,9 +72,9 @@ const EmbudoPage = () => {
     setCargando(true)
     setError(null)
     try {
-      const r = await fetch('/admin/embudo', { credentials: 'include' })
-      if (!r.ok) throw new Error(`El servidor respondió ${r.status}`)
-      const d = await r.json()
+      const d = await sdk.client.fetch<{ pedidos: Pedido[]; resumen: Resumen[] }>(
+        '/admin/embudo'
+      )
       setPedidos(d.pedidos)
       setResumen(d.resumen)
     } catch (e: any) {
