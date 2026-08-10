@@ -12,6 +12,7 @@ import {
 } from '@medusajs/ui'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { PosicionLinea } from '../../components/posicion'
 import { sdk } from '../../lib/sdk'
 // Se importa desde aquí porque las extensiones del admin no tienen un punto de
 // entrada global: Vite empaqueta este CSS con el resto y acaba aplicándose a
@@ -525,10 +526,17 @@ const PedidosPage = () => {
                           </Tooltip>
                         )}
                       </div>
-                      <span className={`text-ui-fg-muted ${num}`}>
-                        {mat.material} · {mat.categoria} · disp{' '}
-                        {mat.disponible_total}
-                      </span>
+                      <div className={`text-ui-fg-muted ${num}`}>
+                        {mat.material} · {mat.categoria}
+                      </div>
+                      {/* Los tres estados a la vista: sin esto la grilla solo
+                          mostraba lo disponible en la marca, y el comprador no
+                          podía saber si ya tenía ese material navegando. */}
+                      <PosicionLinea
+                        propio={mat.propio_total}
+                        transito={mat.transito_total}
+                        proveedor={mat.disponible_total}
+                      />
                     </td>
 
                     <td className="px-2 py-1.5">
@@ -593,7 +601,10 @@ const PedidosPage = () => {
                       return (
                         <td key={t} className="px-1 py-1.5">
                           <Tooltip
-                            content={`Disponible ${disponible} · ${info.sku}`}
+                            content={
+                              `Marca ${disponible} · tránsito ${info.transito} · ` +
+                              `bodega ${info.propio}\n${info.sku}`
+                            }
                           >
                             <input
                               type="number"
