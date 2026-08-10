@@ -351,8 +351,26 @@ Nunca edites una migración ya aplicada. Genera una nueva.
       y compensación, grilla en `/app/pedidos` con curvas y carga de Excel.
 - [x] Embudo de ventas y despacho — tablero en `/app/embudo`. La etapa se
       **deriva** de los campos nativos de Medusa, no se guarda aparte.
+- [x] Fotos de producto — 329 de 334. Dos fuentes: el CSV de la tienda Shopify
+      y el catálogo público de KEEN (`etl/descargar-catalogo-keen.js` +
+      `emparejar-fotos-keen.js`, cruce por género + color). Los 5 que faltan no
+      están publicados en ese color. **Las URLs apuntan a CDN ajenos**; migrar
+      a Supabase Storage sigue pendiente.
+- [x] Visibilidad del tránsito — `/app/inventario` (posición por producto con
+      foto, tallas y toggle de existencia), widget en la ficha de inventario y
+      las tres cifras en la grilla de pedido. La lista nativa de Medusa **no
+      servía**: cuatro columnas fijas en código, nunca pinta `thumbnail` y sus
+      filtros son solo de texto.
+- [x] Títulos de inventory items — eran la talla suelta ("M 7"), porque Medusa
+      los deriva de la variante. Ahora "NEWPORT · BISON · M 7", con foto.
+      Se rehace con `src/scripts/fix-inventory-titles.ts`.
 - [ ] Flujo de venta end-to-end
 - [ ] Embudo de despacho
+- [ ] UPC/EAN por talla — 3.106 códigos reales de KEEN esperando en
+      `data/upc-keen.json`, sin cargar. Es lo que habilita el lector de código
+      de barras en alistamiento.
+- [ ] Costeo de importación y precios COP — **en hold por decisión del negocio**.
+      Sin costo nacionalizado, cualquier margen que muestre el sistema es falso.
 
 ---
 
