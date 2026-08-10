@@ -18,21 +18,40 @@ import '../styles/branding.css'
 
 const IDIOMA_POR_DEFECTO = 'es'
 
+/**
+ * Marca propia. Hace falta porque `lng` no sirve para saber si el usuario
+ * eligió idioma: i18next guarda ahí tanto la elección del perfil como el
+ * idioma que detecta solo del navegador, y quedan indistinguibles. Casi todo
+ * el mundo tiene ya un `lng=en` que nadie eligió.
+ *
+ * Con esta marca el cambio a español ocurre UNA vez por navegador; a partir de
+ * ahí manda lo que el usuario ponga en su perfil.
+ */
+const MARCA_IDIOMA = 'altura.idioma-inicial'
+
+/**
+ * Se ejecuta al cargar el bundle, no al pintar el login: así también alcanza a
+ * quien entra con la sesión ya abierta y nunca ve esta pantalla. i18next lee
+ * `lng` al arrancar, de modo que como muy tarde aplica en la siguiente carga.
+ */
+if (typeof window !== 'undefined' && !window.localStorage.getItem(MARCA_IDIOMA)) {
+  window.localStorage.setItem(MARCA_IDIOMA, IDIOMA_POR_DEFECTO)
+  window.localStorage.setItem('lng', IDIOMA_POR_DEFECTO)
+}
+
 const LoginBranding = () => {
   const { i18n } = useTranslation()
 
   useEffect(() => {
     // El dashboard ya viene traducido al español; solo hay que seleccionarlo.
-    // i18next lo busca en la clave `lng` de localStorage.
-    //
-    // Solo se fija si el usuario no ha elegido idioma antes: si alguien pone
-    // el admin en inglés desde su perfil, esto no debe revertirlo en cada
-    // inicio de sesión.
-    if (window.localStorage.getItem('lng')) {
+    // Esto cubre la carga actual: lo de arriba solo deja el valor listo para
+    // el siguiente arranque de i18next.
+    if (!i18n.language || i18n.language.startsWith(IDIOMA_POR_DEFECTO)) {
       return
     }
-
-    window.localStorage.setItem('lng', IDIOMA_POR_DEFECTO)
+    if (window.localStorage.getItem('lng') !== IDIOMA_POR_DEFECTO) {
+      return // el usuario eligió otro idioma; se respeta
+    }
     void i18n.changeLanguage(IDIOMA_POR_DEFECTO)
   }, [i18n])
 
