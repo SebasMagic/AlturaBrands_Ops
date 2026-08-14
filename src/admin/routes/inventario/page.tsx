@@ -456,9 +456,22 @@ const InventarioPage = () => {
   )
 }
 
+/**
+ * Va anidada bajo la sección de inventario nativa, no como entrada suelta.
+ *
+ * Con el admin en español, la etiqueta nativa (`es.inventory.domain`) es
+ * "Inventario": una entrada nuestra con ese mismo nombre daba dos ítems
+ * idénticos de primer nivel, que no se lee como dos herramientas sino como un
+ * error de la aplicación.
+ *
+ * Anidada se lee como lo que es — una sección con dos vistas del mismo
+ * inventario: la nativa para ajustar existencias, esta para verlas cruzadas
+ * con tránsito y disponibilidad de marca.
+ */
 export const config = defineRouteConfig({
-  label: 'Inventario',
+  label: 'Posición',
   icon: ArchiveBox,
+  nested: '/inventory',
 })
 
 export default InventarioPage
