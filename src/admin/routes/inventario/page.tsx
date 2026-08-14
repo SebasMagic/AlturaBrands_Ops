@@ -457,21 +457,24 @@ const InventarioPage = () => {
 }
 
 /**
- * Va anidada bajo la sección de inventario nativa, no como entrada suelta.
+ * Entrada de primer nivel, y se llama "Inventario" a secas.
  *
- * Con el admin en español, la etiqueta nativa (`es.inventory.domain`) es
- * "Inventario": una entrada nuestra con ese mismo nombre daba dos ítems
- * idénticos de primer nivel, que no se lee como dos herramientas sino como un
- * error de la aplicación.
+ * Esta es la vista del día a día; la lista nativa pasa a llamarse "Stock
+ * Master" (ver `src/admin/i18n/`), que es lo que de verdad es: el repositorio
+ * donde se cargan y ajustan las existencias.
  *
- * Anidada se lee como lo que es — una sección con dos vistas del mismo
- * inventario: la nativa para ajustar existencias, esta para verlas cruzadas
- * con tránsito y disponibilidad de marca.
+ * No puede ser la entrada madre de la sección aunque sea la principal: el ítem
+ * padre del menú es una ruta del core con `to: "/inventory"` fijo en el código
+ * del dashboard, y las rutas de extensión solo pueden añadirse como hijas o
+ * quedar sueltas. Se eligió suelta para que no cuelgue de la que alimenta.
+ *
+ * `rank: 0` la deja por delante de las demás rutas propias, que no declaran
+ * rango y por tanto van después.
  */
 export const config = defineRouteConfig({
-  label: 'Posición',
+  label: 'Inventario',
   icon: ArchiveBox,
-  nested: '/inventory',
+  rank: 0,
 })
 
 export default InventarioPage

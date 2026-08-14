@@ -1,0 +1,9 @@
+{
+  "login": {
+    "title": "AlturaBrands",
+    "hint": "Ingresa para acceder al sistema"
+  },
+  "inventory": {
+    "domain": "Stock Master"
+  }
+}

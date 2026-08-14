@@ -6,5 +6,8 @@
   "resetPassword": {
     "resetPassword": "Restablecer contraseña",
     "resetPasswordHint": "Escribe tu correo y te enviaremos instrucciones"
+  },
+  "inventory": {
+    "domain": "Stock Master"
   }
 }

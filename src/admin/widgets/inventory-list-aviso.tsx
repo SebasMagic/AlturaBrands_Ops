@@ -17,7 +17,8 @@ import { Link } from 'react-router-dom'
 const InventoryListAviso = () => (
   <div className="border-ui-border-base bg-ui-bg-base flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border px-4 py-3">
     <Text size="small" className="text-ui-fg-subtle">
-      Esta vista es para <strong className="text-ui-fg-base">ajustar</strong>{' '}
+      Stock Master es el repositorio: aquí se{' '}
+      <strong className="text-ui-fg-base">cargan y ajustan</strong> las
       existencias, talla por talla. Para ver la posición por producto —con foto,
       stock en tránsito y disponibilidad en la marca—
     </Text>
@@ -25,7 +26,7 @@ const InventoryListAviso = () => (
       to="/inventario"
       className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover inline-flex items-center gap-x-1 text-sm font-medium"
     >
-      abre Posición
+      abre Inventario
       <ArrowUpRightOnBox />
     </Link>
   </div>
