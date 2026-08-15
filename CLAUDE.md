@@ -649,6 +649,37 @@ Sin exportar, sin importar, sin big bang.
       consultar Postgres, con caché de 30 s.
       Si falta la base o la consulta falla, se **niega** el acceso.
 
+- [x] **Los dos embudos, separados.** Son cosas distintas y por eso se modelan
+      distinto — es la decisión que hay que entender antes de tocarlos:
+
+      **`/operaciones`** (antes `/embudo`). La etapa se **deriva** de hechos:
+      reservas, empaques, despachos. Guardarla crearía una segunda verdad que
+      se desincroniza en cuanto alguien despacha por otra vía. Por eso ahí no
+      se arrastra nada — mandan los hechos.
+
+      **`/embudo`**, comercial. La etapa es el **juicio del vendedor** sobre
+      dónde está la conversación: «está evaluando», «estamos negociando». No
+      hay ningún hecho del que deducirla, así que si no se guarda no existe.
+      Por eso es una columna (`ops.sales_order.etapa_comercial`) y por eso sí
+      se arrastra.
+
+      Tablero kanban con drag & drop **nativo de HTML5, sin librerías**, más
+      vista lista. El movimiento es optimista y se revierte si el servidor
+      rechaza. `orden_tablero` usa huecos de 100 para insertar en medio sin
+      reescribir la columna entera.
+
+      **Arrastrar tiene consecuencias reales, no cosméticas:** soltar en
+      *Ganado* confirma el pedido y habilita reservar; en *Perdido* lo cancela
+      y **libera el inventario reservado**; sacarlo de *Ganado* también libera,
+      porque una propuesta no debe retener stock que otro cliente podría
+      llevarse. Mover algo ya despachado se rechaza: eso salió por la puerta y
+      no se deshace arrastrando una tarjeta.
+
+      Hallazgo de la prueba: una cotización nacía en `PROSPECTO` por el default
+      de la columna, pero **ya tiene líneas y precios** — llamarla «interés sin
+      números todavía» era mentir. Nace en `COTIZADO`; `PROSPECTO` queda para
+      arrastrar hacia atrás y para una futura captura de interesados.
+
 - [ ] **Pendientes conocidos.**
       · **Poner las 3 variables de entorno en Vercel** — hasta entonces la app
         desplegada muestra el aviso de configuración y no deja entrar.
