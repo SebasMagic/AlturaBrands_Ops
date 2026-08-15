@@ -135,17 +135,20 @@ export function Tablero({ inicial }: { inicial: Oportunidad[] }) {
         </div>
       )}
 
-      {oportunidades.length === 0 ? (
-        <div className="border-line bg-surface rounded-lg border px-6 py-12 text-center">
-          <p className="text-ink-subtle text-sm">El embudo está vacío.</p>
-          <p className="text-ink-muted mt-1 text-sm">
-            Cada cotización que crees aparece aquí como una tarjeta.
-          </p>
-          <Link href="/ventas/nueva" className="text-interactive mt-3 inline-block text-sm hover:underline">
+      {/* Vacío se avisa, pero el tablero SÍ se pinta: ver la forma del embudo
+          con sus etapas vale más que un cartel que la esconde. */}
+      {oportunidades.length === 0 && (
+        <div className="border-line bg-surface flex flex-wrap items-center gap-x-2 rounded-lg border px-4 py-3">
+          <span className="text-ink-subtle text-sm">
+            El embudo está vacío. Cada cotización que crees aparece aquí como una tarjeta.
+          </span>
+          <Link href="/ventas/nueva" className="text-interactive text-sm hover:underline">
             Crear la primera cotización
           </Link>
         </div>
-      ) : vista === 'kanban' ? (
+      )}
+
+      {vista === 'kanban' ? (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
           {ETAPAS.map((etapa) => {
             const cards = porEtapa[etapa.id] ?? []
@@ -228,6 +231,13 @@ export function Tablero({ inicial }: { inicial: Oportunidad[] }) {
               </tr>
             </thead>
             <tbody className="divide-line divide-y">
+              {oportunidades.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-ink-muted px-3 py-8 text-center text-sm">
+                    Sin oportunidades todavía.
+                  </td>
+                </tr>
+              )}
               {[...oportunidades]
                 .sort((a, b) => b.valorCents - a.valorCents)
                 .map((o) => (
