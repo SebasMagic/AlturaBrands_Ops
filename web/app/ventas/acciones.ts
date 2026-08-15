@@ -19,7 +19,10 @@ const OPERACION = 'CO'
 /** Todas las pantallas que cambian cuando se mueve un pedido. */
 function refrescar(orderId?: number) {
   revalidatePath('/ventas')
+  // Las dos pantallas de embudo: la comercial muestra el valor de la
+  // oportunidad, la de operaciones el avance del despacho.
   revalidatePath('/embudo')
+  revalidatePath('/operaciones')
   revalidatePath('/inventario')
   if (orderId) revalidatePath(`/ventas/${orderId}`)
 }

@@ -270,9 +270,16 @@ export async function crearCotizacion(
     )
     const code = `SO-${datos.operacion}-${String(previos[0].n + 1).padStart(4, '0')}`
 
+    /**
+     * Nace en COTIZADO, no en PROSPECTO (el default de la columna): lo que se
+     * crea aquí ya tiene líneas y precios, así que llamarlo "interés sin
+     * números todavía" sería mentir. PROSPECTO queda para arrastrar hacia
+     * atrás, y para una futura captura de interesados sin cotización.
+     */
     const { rows: so } = await client.query(
-      `insert into ops.sales_order (code, operation_id, customer_id, warehouse_id, status, currency_code, notes, quoted_at)
-       values ($1,$2,$3,$4,'COTIZACION',$5,$6,now()) returning id`,
+      `insert into ops.sales_order
+         (code, operation_id, customer_id, warehouse_id, status, currency_code, notes, quoted_at, etapa_comercial)
+       values ($1,$2,$3,$4,'COTIZACION',$5,$6,now(),'COTIZADO') returning id`,
       [code, operationId, datos.customerId, wh[0].id, 'cop', datos.notes ?? null]
     )
     const orderId = so[0].id

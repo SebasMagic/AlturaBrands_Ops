@@ -21,6 +21,7 @@ export const metadata: Metadata = {
  */
 const SECCIONES: { label: string; href: string | null }[] = [
   { label: 'Embudo', href: '/embudo' },
+  { label: 'Operaciones', href: '/operaciones' },
   { label: 'Ventas', href: '/ventas' },
   { label: 'Pedidos', href: '/pedidos' },
   { label: 'Inventario', href: '/inventario' },
