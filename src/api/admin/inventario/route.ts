@@ -13,13 +13,14 @@ import { ContainerRegistrationKeys } from '@medusajs/framework/utils'
  * la única vista que cruza existencias propias, tránsito y disponibilidad de
  * proveedor sin sumarlos entre sí.
  *
- * GET /admin/inventario?operacion=CO&genero=MEN&q=newport&con_stock=true
+ * GET /admin/inventario?operacion=CO&marca=KEEN&genero=MEN&q=newport&con_stock=true
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const knex = req.scope.resolve(ContainerRegistrationKeys.PG_CONNECTION)
 
   const {
     operacion = 'CO',
+    marca,
     genero,
     categoria,
     q,
@@ -36,6 +37,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       max(pr.id)              as producto_id,
       max(pr.thumbnail)       as foto,
       max(v.producto)         as descripcion,
+      max(v.marca)            as marca,
       max(v.modelo)           as modelo,
       max(v.color)            as color,
       max(v.genero)           as genero,
@@ -68,6 +70,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     where v.operacion = ?
       -- El cast explícito es obligatorio: sin él Postgres no puede inferir el
       -- tipo de un parámetro que llega nulo y aborta con 42P18.
+      and (?::text is null or v.marca = ?)
       and (?::text is null or v.genero = ?)
       and (?::text is null or v.categoria = ?)
       and (
@@ -84,6 +87,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     `,
     [
       operacion,
+      marca ?? null,
+      marca ?? null,
       genero ?? null,
       genero ?? null,
       categoria ?? null,
@@ -107,6 +112,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   // el universo completo, no el filtrado.
   const dimensiones = await knex.raw(
     `select
+       array_agg(distinct marca)     filter (where marca is not null)     as marcas,
        array_agg(distinct genero)    filter (where genero is not null)    as generos,
        array_agg(distinct categoria) filter (where categoria is not null) as categorias
      from bi.v_posicion
@@ -126,6 +132,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       transito: suma('transito'),
       proveedor: suma('proveedor'),
     },
+    marcas: dimensiones.rows?.[0]?.marcas ?? [],
     generos: dimensiones.rows?.[0]?.generos ?? [],
     categorias: dimensiones.rows?.[0]?.categorias ?? [],
     materiales: rows,

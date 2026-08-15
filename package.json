@@ -13,6 +13,7 @@
     "db:migrate": "node sql/drop-bi.js && cross-env MEDUSA_DB_MODE=migration medusa db:migrate && node sql/apply.js bi",
     "db:migrate:only": "cross-env MEDUSA_DB_MODE=migration medusa db:migrate",
     "bi:apply": "node sql/apply.js bi",
+    "verificar": "node migracion/verificar.mjs",
     "db:generate": "cross-env MEDUSA_DB_MODE=migration medusa db:generate",
     "user:create": "cross-env MEDUSA_DB_MODE=migration medusa user",
     "test:integration:http": "cross-env TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",

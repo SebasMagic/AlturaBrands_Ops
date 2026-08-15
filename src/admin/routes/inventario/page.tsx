@@ -40,6 +40,7 @@ type MaterialFila = {
   producto_id: string | null
   foto: string | null
   descripcion: string
+  marca: string | null
   modelo: string
   color: string
   genero: string
@@ -65,6 +66,7 @@ type Respuesta = {
     transito: number
     proveedor: number
   }
+  marcas: string[]
   generos: string[]
   categorias: string[]
   materiales: MaterialFila[]
@@ -129,7 +131,7 @@ const DesgloseTallas = ({ tallas }: { tallas: Talla[] }) => (
             key={t.sku}
             content={
               `${t.sku}\nBodega ${t.propio} · reservado ${t.reservado}\n` +
-              `Tránsito ${t.transito} · marca ${t.proveedor}`
+              `Tránsito ${t.transito} · por pedir ${t.proveedor}`
             }
           >
             <div
@@ -170,6 +172,7 @@ const DesgloseTallas = ({ tallas }: { tallas: Talla[] }) => (
 const InventarioPage = () => {
   const [q, setQ] = useState('')
   const [busqueda, setBusqueda] = useState('')
+  const [marca, setMarca] = useState(TODOS)
   const [genero, setGenero] = useState(TODOS)
   const [categoria, setCategoria] = useState(TODOS)
   const [conStock, setConStock] = useState(false)
@@ -193,6 +196,7 @@ const InventarioPage = () => {
 
     const query: Record<string, string> = { operacion: 'CO' }
     if (busqueda) query.q = busqueda
+    if (marca !== TODOS) query.marca = marca
     if (genero !== TODOS) query.genero = genero
     if (categoria !== TODOS) query.categoria = categoria
     if (conStock) query.con_stock = 'true'
@@ -214,10 +218,17 @@ const InventarioPage = () => {
     return () => {
       vigente = false
     }
-  }, [busqueda, genero, categoria, conStock])
+  }, [busqueda, marca, genero, categoria, conStock])
 
   const materiales = data?.materiales ?? []
   const r = data?.resumen
+
+  // La tarjeta puede nombrar la marca solo cuando hay una sola en juego: porque
+  // está filtrada, o porque el catálogo todavía no tiene más. Con varias a la
+  // vez el total es una suma de marcas distintas y no puede nombrar ninguna.
+  const marcas = data?.marcas ?? []
+  const marcaEnJuego =
+    marca !== TODOS ? marca : marcas.length === 1 ? marcas[0] : null
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -248,7 +259,9 @@ const InventarioPage = () => {
             etiqueta="Por pedir en la marca"
             valor={r.proveedor}
             tono="text-ui-fg-base"
-            nota="disponible en KEEN"
+            nota={
+              marcaEnJuego ? `disponible en ${marcaEnJuego}` : 'disponible en la marca'
+            }
           />
           <Tarjeta
             etiqueta="Productos"
@@ -279,6 +292,20 @@ const InventarioPage = () => {
           onChange={(e) => setQ(e.target.value)}
           className="w-64"
         />
+
+        <Select value={marca} onValueChange={setMarca}>
+          <Select.Trigger className="w-40">
+            <Select.Value placeholder="Marca" />
+          </Select.Trigger>
+          <Select.Content>
+            <Select.Item value={TODOS}>Todas las marcas</Select.Item>
+            {marcas.map((m) => (
+              <Select.Item key={m} value={m}>
+                {m}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select>
 
         <Select value={genero} onValueChange={setGenero}>
           <Select.Trigger className="w-40">
@@ -364,6 +391,7 @@ const InventarioPage = () => {
               <tr>
                 <th className="w-8 px-2 py-2" />
                 <th className="min-w-72 px-3 py-2 font-medium">Producto</th>
+                <th className="w-24 px-3 py-2 font-medium">Marca</th>
                 <th className="w-24 px-3 py-2 font-medium">Género</th>
                 <th className={`w-24 px-3 py-2 text-right font-medium ${num}`}>
                   Bodega
@@ -372,7 +400,7 @@ const InventarioPage = () => {
                   Tránsito
                 </th>
                 <th className={`w-28 px-3 py-2 text-right font-medium ${num}`}>
-                  Marca
+                  Por pedir
                 </th>
                 <th className={`w-24 px-3 py-2 text-right font-medium ${num}`}>
                   Tallas
@@ -420,6 +448,10 @@ const InventarioPage = () => {
                     </td>
 
                     <td className="text-ui-fg-subtle px-3 py-2 text-xs">
+                      {m.marca ?? '—'}
+                    </td>
+
+                    <td className="text-ui-fg-subtle px-3 py-2 text-xs">
                       {m.genero}
                     </td>
 
@@ -440,7 +472,7 @@ const InventarioPage = () => {
 
                   {expandido && (
                     <tr>
-                      <td colSpan={7} className="p-0">
+                      <td colSpan={8} className="p-0">
                         <DesgloseTallas tallas={m.tallas} />
                       </td>
                     </tr>
