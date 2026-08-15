@@ -20,11 +20,11 @@ export const metadata: Metadata = {
  * que aún no está).
  */
 const SECCIONES: { label: string; href: string | null }[] = [
-  { label: 'Inventario', href: '/inventario' },
-  { label: 'Pedidos', href: '/pedidos' },
-  { label: 'Ventas', href: '/ventas' },
-  { label: 'Clientes', href: '/clientes' },
   { label: 'Embudo', href: '/embudo' },
+  { label: 'Ventas', href: '/ventas' },
+  { label: 'Pedidos', href: '/pedidos' },
+  { label: 'Inventario', href: '/inventario' },
+  { label: 'Clientes', href: '/clientes' },
 ]
 
 /** Rutas que se renderizan sin marco y sin exigir autorización. */
