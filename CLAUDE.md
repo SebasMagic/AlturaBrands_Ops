@@ -627,11 +627,43 @@ Sin exportar, sin importar, sin big bang.
       Usuario inicial creado: `santiago@themagichack.com`. **La contraseña es
       temporal y hay que cambiarla.**
 
-- [ ] **Pendientes conocidos.** Cambiar la contraseña temporal del usuario
-      inicial. Editar `quantity_confirmed` talla a talla en el pedido a la
-      marca (hoy «Cantidades revisadas» confirma todo). Importar pedidos desde
-      Excel. Devoluciones. Transferencias entre bodegas. Roles y permisos —
-      hoy todo usuario autenticado ve y puede todo.
+- [x] **Desplegado en Vercel.** Proyecto `alturabrands-ops`, enlazado al repo
+      de GitHub: cada push a `main` despliega solo.
+      `web/` es el root directory; el código de Medusa en la raíz no se toca.
+
+- [x] **Control de acceso — hallazgo del despliegue.** El registro público de
+      Supabase Auth estaba **abierto**, y el middleware sólo comprobaba que
+      hubiera *una* sesión válida, no de quién. Cualquiera podía crear cuenta
+      con su correo, confirmarla y entrar al ERP completo. Se verificó creando
+      una cuenta desde fuera con la clave publishable.
+      Ahora `ops.app_user` es la lista de autorizados — enlazada por correo y
+      no por el uuid de `auth.users`, para poder dar de alta a alguien antes de
+      que se registre, que es el orden real.
+
+      **La comprobación va en el middleware, NO en el layout.** Se intentó
+      primero en el layout y **filtraba**: Next renderiza la página en paralelo
+      con el layout, así que al llamar a `redirect()` los datos ya estaban
+      calculados y viajaban en el cuerpo del 307 — 503 KB con el inventario
+      completo, invisibles en el navegador pero legibles con `curl`. Ese cuerpo
+      son ahora 11 bytes. El middleware corre en runtime `nodejs` para poder
+      consultar Postgres, con caché de 30 s.
+      Si falta la base o la consulta falla, se **niega** el acceso.
+
+- [ ] **Pendientes conocidos.**
+      · **Poner las 3 variables de entorno en Vercel** — hasta entonces la app
+        desplegada muestra el aviso de configuración y no deja entrar.
+      · **Cerrar el registro público en el dashboard de Supabase** (Auth →
+        Providers → Email → *Allow new users to sign up*). La lista de
+        autorizados ya protege el ERP, pero sin esto siguen pudiendo crearse
+        cuentas sueltas en el proyecto.
+      · **Cambiar la contraseña temporal** del usuario inicial.
+      · **El repo de GitHub es público.** No hay credenciales dentro (se
+        verificó antes de cada commit), pero el código y el modelo de datos son
+        visibles. Decidir si debe pasar a privado.
+      · Roles: `ops.app_user.rol` existe con cuatro valores pero **ningún
+        permiso está aplicado todavía** — cualquier autorizado puede todo.
+      · Editar `quantity_confirmed` talla a talla. Importar pedidos desde
+        Excel. Devoluciones. Transferencias entre bodegas.
 - [ ] **Fase 6 · Integración de facturación** (Siigo u otro) por API.
 - [ ] **Fase 7 · Retirar Medusa.** Borrar las 159 tablas de `public` y las
       dependencias. Sólo cuando la Fase 4 esté en uso real.
