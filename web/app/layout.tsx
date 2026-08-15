@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { salirAction } from '@/app/login/actions'
+import { autorizacionDe } from '@/lib/db/usuarios'
 import { usuarioActual } from '@/lib/supabase/server'
 import './globals.css'
 
@@ -24,16 +27,33 @@ const SECCIONES: { label: string; href: string | null }[] = [
   { label: 'Embudo', href: '/embudo' },
 ]
 
+/** Rutas que se renderizan sin marco y sin exigir autorización. */
+const SIN_MARCO = ['/login', '/sin-acceso']
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // El middleware ya bloqueó el acceso sin sesión; esto es sólo para pintar
-  // quién está dentro. Si Supabase no está configurado, `usuarioActual` lanza
-  // y la app queda en el login con su aviso.
+  // El middleware ya bloqueó el acceso sin sesión. Aquí se comprueba lo otro,
+  // que el middleware no puede: que ese usuario esté AUTORIZADO.
+  //
+  // Va en el layout raíz a propósito — es el único punto por el que pasan
+  // todas las páginas, así que una ruta nueva queda cubierta sola. El
+  // middleware no sirve para esto: consultar Postgres desde el edge en cada
+  // request sería caro y lento.
   let correo: string | null = null
   try {
     const usuario = await usuarioActual()
     correo = usuario?.email ?? null
   } catch {
     correo = null
+  }
+
+  const ruta = (await headers()).get('x-pathname') ?? ''
+  const enPaginaLibre = SIN_MARCO.some((p) => ruta.startsWith(p))
+
+  if (correo && !enPaginaLibre) {
+    // Autenticado en Supabase no es lo mismo que autorizado aquí: el registro
+    // público permite crear cuentas a cualquiera.
+    const autorizado = await autorizacionDe(correo)
+    if (!autorizado) redirect('/sin-acceso')
   }
 
   return (
