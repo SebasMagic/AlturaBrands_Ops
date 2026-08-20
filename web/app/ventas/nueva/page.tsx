@@ -1,24 +1,20 @@
 import Link from 'next/link'
 import { listarClientes } from '@/lib/db/clientes'
-import { obtenerCatalogoVendible } from '@/lib/db/ventas'
-import { GrillaCotizacion } from '@/components/ventas/GrillaCotizacion'
+import { Proforma } from '@/components/ventas/Proforma'
 
 const OPERACION = 'CO'
 
-type BusquedaParams = Promise<Record<string, string | string[] | undefined>>
+export const dynamic = 'force-dynamic'
 
-function unoSolo(v: string | string[] | undefined): string | undefined {
-  return Array.isArray(v) ? v[0] : v
-}
-
-export default async function NuevaVentaPage({ searchParams }: { searchParams: BusquedaParams }) {
-  const sp = await searchParams
-  const q = unoSolo(sp.q)
-
-  const [clientes, materiales] = await Promise.all([
-    listarClientes(OPERACION),
-    obtenerCatalogoVendible(OPERACION, q),
-  ])
+/**
+ * Nueva proforma.
+ *
+ * Ya no carga el catálogo entero: con 269 materiales, volcarlos todos hacía la
+ * pantalla inusable y además obligaba a traerse miles de filas para que el
+ * vendedor mirase tres. Ahora los ítems entran por búsqueda, bajo demanda.
+ */
+export default async function NuevaVentaPage() {
+  const clientes = await listarClientes(OPERACION)
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -26,9 +22,10 @@ export default async function NuevaVentaPage({ searchParams }: { searchParams: B
         <Link href="/ventas" className="text-interactive text-xs hover:underline">
           ← Ventas
         </Link>
-        <h1 className="text-ink mt-1 text-xl font-semibold">Nueva cotización</h1>
+        <h1 className="text-ink mt-1 text-xl font-semibold">Nueva proforma</h1>
         <p className="text-ink-subtle text-sm">
-          Sólo aparece lo vendible hoy: bodega menos lo ya reservado.
+          Busca los ítems por SKU, modelo, color o talla. Sólo aparece lo vendible hoy:
+          bodega menos lo ya reservado.
         </p>
       </div>
 
@@ -40,7 +37,7 @@ export default async function NuevaVentaPage({ searchParams }: { searchParams: B
           </Link>
         </div>
       ) : (
-        <GrillaCotizacion clientes={clientes} materiales={materiales} />
+        <Proforma clientes={clientes} />
       )}
     </div>
   )

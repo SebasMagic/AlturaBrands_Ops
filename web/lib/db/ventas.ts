@@ -2,90 +2,6 @@ import { getPool } from './pool'
 import { liberarReservas } from './reservas'
 import { puedeDespachar, type EstadoDespacho, type EstadoVenta } from '@/lib/domain/ventas'
 
-// --- Catálogo vendible -------------------------------------------------------
-
-export type TallaVendible = {
-  variantId: number
-  sku: string
-  sizeLabel: string
-  sizeValue: number | null
-  disponible: number
-  precioCents: number
-}
-
-export type MaterialVendible = {
-  material: string
-  descripcion: string
-  modelo: string
-  color: string
-  genero: string
-  foto: string | null
-  tallas: TallaVendible[]
-}
-
-/**
- * Lo que se puede vender HOY: existencias propias menos lo ya reservado.
- *
- * Deliberadamente NO incluye tránsito ni disponibilidad en la marca. Esas
- * unidades no se pueden comprometer — es exactamente el error que la
- * separación de las tres naturalezas existe para impedir (CLAUDE.md §6).
- */
-export async function obtenerCatalogoVendible(
-  operacion: string,
-  q?: string
-): Promise<MaterialVendible[]> {
-  const pool = getPool()
-  const { rows } = await pool.query(
-    `
-    select
-      p.material,
-      max(p.modelo || ' · ' || p.color)  as descripcion,
-      max(p.modelo)                      as modelo,
-      max(p.color)                       as color,
-      max(p.genero)                      as genero,
-      max(p.thumbnail_url)               as foto,
-      jsonb_agg(
-        jsonb_build_object(
-          'variantId',   v.id,
-          'sku',         v.sku,
-          'sizeLabel',   v.size_label,
-          'sizeValue',   v.size_value,
-          'disponible',  s.qty - s.reserved,
-          -- El precio de venta en COP todavía no existe como dato (el costeo
-          -- de importación está en hold), así que se captura a mano en la
-          -- cotización. Ver los pendientes de CLAUDE.md §10.
-          'precioCents', 0
-        )
-        order by v.size_value nulls last, v.size_label
-      ) as tallas
-    from ops.stock s
-    join ops.variant v   on v.id = s.variant_id
-    join ops.product p   on p.id = v.product_id
-    join ops.warehouse w on w.id = s.warehouse_id
-    join ops.operation o on o.id = w.operation_id
-    where o.code = $1
-      and s.qty - s.reserved > 0
-      and ($2::text is null
-           or p.modelo ilike '%' || $2 || '%'
-           or p.color  ilike '%' || $2 || '%'
-           or p.material ilike '%' || $2 || '%')
-    group by p.material
-    order by max(p.modelo), max(p.color)
-    `,
-    [operacion, q ?? null]
-  )
-
-  return rows.map((r) => ({
-    material: r.material,
-    descripcion: r.descripcion,
-    modelo: r.modelo,
-    color: r.color,
-    genero: r.genero,
-    foto: r.foto,
-    tallas: r.tallas,
-  }))
-}
-
 // --- Bandeja y detalle -------------------------------------------------------
 
 export type VentaResumen = {
@@ -135,6 +51,7 @@ export type LineaVenta = {
   reservada: number
   despachada: number
   precioCents: number
+  descuentoPct: number
 }
 
 export type DespachoResumen = {
@@ -153,6 +70,9 @@ export type VentaDetalle = {
   etapa: string
   currencyCode: string
   bodega: string
+  /** Descuento a pie de documento, en porcentaje. */
+  descuentoPiePct: number
+  validUntil: string | null
   lineas: LineaVenta[]
   despachos: DespachoResumen[]
 }
@@ -162,7 +82,12 @@ export async function obtenerVenta(orderId: number): Promise<VentaDetalle | null
 
   const { rows: cab } = await pool.query(
     `select so.id, so.code, so.status, so.currency_code, c.name as cliente,
-            w.name as bodega, e.etapa
+            w.name as bodega, e.etapa, so.discount_pct,
+            -- ::text a propósito. Sin el cast, pg devuelve un Date en UTC y
+            -- '2026-12-31' se convierte en 2026-12-31T05:00Z, que al
+            -- formatear en Colombia muestra el DÍA ANTERIOR. Además el tipo
+            -- declarado es string: sin el cast sería mentira.
+            so.valid_until::text as valid_until
        from ops.sales_order so
        join ops.customer c  on c.id = so.customer_id
        join ops.warehouse w on w.id = so.warehouse_id
@@ -173,7 +98,7 @@ export async function obtenerVenta(orderId: number): Promise<VentaDetalle | null
   if (!cab[0]) return null
 
   const { rows: lineas } = await pool.query(
-    `select l.id, v.sku, v.size_label, l.quantity, l.unit_price_cents,
+    `select l.id, v.sku, v.size_label, l.quantity, l.unit_price_cents, l.discount_pct,
             p.modelo || ' · ' || p.color as descripcion,
             coalesce(r.reservada, 0) as reservada,
             coalesce(d.despachada, 0) as despachada
@@ -215,6 +140,8 @@ export async function obtenerVenta(orderId: number): Promise<VentaDetalle | null
     etapa: cab[0].etapa ?? 'PEDIDO',
     currencyCode: cab[0].currency_code,
     bodega: cab[0].bodega,
+    descuentoPiePct: Number(cab[0].discount_pct),
+    validUntil: cab[0].valid_until,
     lineas: lineas.map((l) => ({
       id: l.id,
       sku: l.sku,
@@ -224,6 +151,7 @@ export async function obtenerVenta(orderId: number): Promise<VentaDetalle | null
       reservada: Number(l.reservada),
       despachada: Number(l.despachada),
       precioCents: Number(l.unit_price_cents),
+      descuentoPct: Number(l.discount_pct),
     })),
     despachos: despachos.map((d) => ({
       id: d.id,
@@ -240,7 +168,16 @@ export async function obtenerVenta(orderId: number): Promise<VentaDetalle | null
 export type NuevaVenta = {
   operacion: string
   customerId: number
-  lineas: { variantId: number; cantidad: number; precioCents: number }[]
+  lineas: {
+    variantId: number
+    cantidad: number
+    precioCents: number
+    descuentoPct: number
+  }[]
+  /** Descuento a pie de documento, sobre el neto de las líneas. */
+  descuentoPiePct?: number
+  /** Hasta cuándo se respetan estos precios. */
+  validUntil?: string | null
   notes?: string
 }
 
@@ -278,18 +215,29 @@ export async function crearCotizacion(
      */
     const { rows: so } = await client.query(
       `insert into ops.sales_order
-         (code, operation_id, customer_id, warehouse_id, status, currency_code, notes, quoted_at, etapa_comercial)
-       values ($1,$2,$3,$4,'COTIZACION',$5,$6,now(),'COTIZADO') returning id`,
-      [code, operationId, datos.customerId, wh[0].id, 'cop', datos.notes ?? null]
+         (code, operation_id, customer_id, warehouse_id, status, currency_code,
+          notes, quoted_at, etapa_comercial, discount_pct, valid_until)
+       values ($1,$2,$3,$4,'COTIZACION',$5,$6,now(),'COTIZADO',$7,$8) returning id`,
+      [
+        code,
+        operationId,
+        datos.customerId,
+        wh[0].id,
+        'cop',
+        datos.notes ?? null,
+        datos.descuentoPiePct ?? 0,
+        datos.validUntil ?? null,
+      ]
     )
     const orderId = so[0].id
 
     for (const l of datos.lineas) {
       if (l.cantidad <= 0) continue
       await client.query(
-        `insert into ops.sales_order_line (order_id, variant_id, quantity, unit_price_cents)
-         values ($1,$2,$3,$4)`,
-        [orderId, l.variantId, l.cantidad, l.precioCents]
+        `insert into ops.sales_order_line
+           (order_id, variant_id, quantity, unit_price_cents, discount_pct)
+         values ($1,$2,$3,$4,$5)`,
+        [orderId, l.variantId, l.cantidad, l.precioCents, l.descuentoPct ?? 0]
       )
     }
 
@@ -521,4 +469,74 @@ export async function moverDespacho(shipmentId: number, a: EstadoDespacho): Prom
   } finally {
     client.release()
   }
+}
+
+// --- Búsqueda para la proforma ----------------------------------------------
+
+export type ResultadoBusqueda = {
+  variantId: number
+  sku: string
+  material: string
+  descripcion: string
+  genero: string
+  tallaLabel: string
+  disponible: number
+}
+
+/**
+ * Busca variantes VENDIBLES por cualquier cosa que el vendedor recuerde: el
+ * SKU, el modelo, el color, el código de material o la talla.
+ *
+ * Cada palabra debe aparecer en algún sitio del texto de la variante, en
+ * cualquier orden: "bison newport" y "newport bison" encuentran lo mismo. Sin
+ * esto habría que teclear el nombre exacto, que es justo lo que nadie recuerda.
+ *
+ * Sólo devuelve lo que se puede comprometer hoy — bodega menos reservado. Ni
+ * el tránsito ni el ATS de la marca aparecen aquí (CLAUDE.md §6).
+ */
+export async function buscarVendible(
+  operacion: string,
+  consulta: string,
+  limite = 40
+): Promise<ResultadoBusqueda[]> {
+  const tokens = consulta.trim().split(/\s+/).filter(Boolean)
+  if (tokens.length === 0) return []
+
+  const pool = getPool()
+  const { rows } = await pool.query(
+    `
+    select
+      v.id as variant_id, v.sku, v.size_label,
+      p.material, p.genero,
+      p.modelo || ' · ' || p.color as descripcion,
+      (s.qty - s.reserved) as disponible
+    from ops.stock s
+    join ops.variant   v on v.id = s.variant_id
+    join ops.product   p on p.id = v.product_id
+    join ops.warehouse w on w.id = s.warehouse_id
+    join ops.operation o on o.id = w.operation_id
+    where o.code = $1
+      and s.qty - s.reserved > 0
+      and coalesce((
+            select bool_and(
+              (p.modelo || ' ' || p.color || ' ' || p.material || ' ' ||
+               v.sku || ' ' || v.size_label || ' ' || p.genero) ilike '%' || tok || '%'
+            )
+            from unnest($2::text[]) as tok
+          ), true)
+    order by p.modelo, p.color, v.size_value nulls last, v.size_label
+    limit $3
+    `,
+    [operacion, tokens, limite]
+  )
+
+  return rows.map((r) => ({
+    variantId: r.variant_id,
+    sku: r.sku,
+    material: r.material,
+    descripcion: r.descripcion,
+    genero: r.genero,
+    tallaLabel: r.size_label,
+    disponible: r.disponible,
+  }))
 }
