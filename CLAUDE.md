@@ -409,9 +409,25 @@ se sientan intencionales, no formularios genéricos.
 - [ ] **UPC/EAN por talla.** 3.106 códigos reales de KEEN esperando en
       `data/upc-keen.json`, sin cargar. Es lo que habilita el lector de código de
       barras en alistamiento.
-- [ ] **Fotos en CDN ajeno.** Las URLs apuntan a servidores de terceros
-      (Shopify y el catálogo público de KEEN). Migrar a Supabase Storage sigue
-      pendiente; si esas URLs mueren, se cae el catálogo visual.
+- [x] **Fotos en Storage propio.** Las 329 imágenes se trajeron del CDN de
+      Shopify al bucket `producto` de Supabase (16,7 MB). Ya no dependemos de
+      un servidor ajeno que podía reorganizarse o bloquear el hotlinking sin
+      avisar.
+      El bucket es **público en lectura** —son fotos de catálogo ya publicadas
+      en la tienda y en el sitio de KEEN, y un bucket privado obligaría a
+      firmar una URL por imagen en cada render— pero **sólo escribe quien está
+      autenticado**.
+      El archivo se llama por código de material (`1001870.jpg`), no por uuid:
+      así es predecible, se reemplaza sin dejar huérfanos y mirando el bucket
+      se sabe de qué producto es cada foto. `ops.product.thumbnail_origen`
+      conserva de dónde vino cada una.
+      Se rehace con `node migracion/migrar-fotos.mjs` (idempotente; `--forzar`
+      para rehacerlas todas).
+- [ ] **5 productos siguen sin foto.** No están publicados en ese color ni en
+      Shopify ni en el catálogo de KEEN: CLEARWATER CNX · RAVEN/TORTOISE SHELL,
+      HYPERPORT FISHERMAN LEATHER en sus dos colores, KS86 LEA ·
+      BIRCH/STAR WHITE y TARGHEE APEX WP WIDE · BRINDLE/CANTEEN. Migrar a
+      Storage no lo resuelve: hay que conseguir la imagen de otra fuente.
 - [ ] **No hay curvas para escalas de niño.** Sólo M y W, pero el catálogo tiene
       CHILDREN, TOTS y YOUTH. Pedir a la marca en esas escalas no está resuelto.
 - [ ] **KEEN hardcodeado en los loaders.** El filtro de marca ya es multimarca,
