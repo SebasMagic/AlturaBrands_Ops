@@ -1,4 +1,21 @@
-import { Pool } from 'pg'
+import { Pool, types } from 'pg'
+
+/**
+ * `bigint` (OID 20) como número, no como string.
+ *
+ * Por defecto `pg` devuelve int8 en texto para no perder precisión más allá de
+ * 2^53. El efecto era que TODOS los `id: number` del código eran mentira:
+ * llegaban strings y funcionaban por coerción accidental — `'5' - '3'` da 2 en
+ * JavaScript, y una comparación con `===` contra un número habría fallado en
+ * silencio el día que alguien la escribiera.
+ *
+ * Es seguro aquí: los ids son columnas `identity` que empiezan en 1, y el
+ * importe mayor que manejamos son centavos de pesos, muy por debajo del entero
+ * seguro de JavaScript (9.007.199.254.740.991). Si algún día apareciera una
+ * columna int8 que de verdad exceda ese rango, habría que leerla como texto
+ * explícitamente en su consulta.
+ */
+types.setTypeParser(types.builtins.INT8, (v) => Number(v))
 
 /**
  * Un solo pool para todo el proceso Node — Server Components y Route Handlers

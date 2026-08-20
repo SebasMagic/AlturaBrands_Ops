@@ -481,6 +481,7 @@ export type ResultadoBusqueda = {
   genero: string
   tallaLabel: string
   disponible: number
+  foto: string | null
 }
 
 /**
@@ -507,7 +508,7 @@ export async function buscarVendible(
     `
     select
       v.id as variant_id, v.sku, v.size_label,
-      p.material, p.genero,
+      p.material, p.genero, p.thumbnail_url,
       p.modelo || ' · ' || p.color as descripcion,
       (s.qty - s.reserved) as disponible
     from ops.stock s
@@ -538,5 +539,93 @@ export async function buscarVendible(
     genero: r.genero,
     tallaLabel: r.size_label,
     disponible: r.disponible,
+    foto: r.thumbnail_url,
   }))
+}
+
+// --- Ficha rápida del producto ----------------------------------------------
+
+export type TallaFicha = {
+  variantId: number
+  sku: string
+  tallaLabel: string
+  disponible: number
+  enTransito: number
+  enMarca: number
+}
+
+export type FichaProducto = {
+  material: string
+  modelo: string
+  color: string
+  genero: string
+  escala: string
+  foto: string | null
+  categoria: string | null
+  tallas: TallaFicha[]
+}
+
+/**
+ * Ficha para confirmar «¿es este?» sin salir de la proforma.
+ *
+ * Muestra la CORRIDA COMPLETA, no sólo la talla buscada: al elegir un ítem lo
+ * que se quiere saber es si el modelo está bien surtido, y eso sólo se ve con
+ * todas las tallas juntas.
+ *
+ * Trae las tres naturalezas (CLAUDE.md §6) porque responden preguntas
+ * distintas: lo disponible se puede vender hoy, el tránsito dice si conviene
+ * esperar, y lo de la marca si habría que pedirlo.
+ */
+export async function obtenerFichaProducto(
+  operacion: string,
+  material: string
+): Promise<FichaProducto | null> {
+  const pool = getPool()
+  const { rows } = await pool.query(
+    `
+    select
+      p.material, p.modelo, p.color, p.genero, p.scale, p.thumbnail_url,
+      c.name as categoria,
+      v.id as variant_id, v.sku, v.size_label, v.size_value,
+      coalesce(st.qty - st.reserved, 0)                                as disponible,
+      coalesce(sa.transito, 0)                                         as transito,
+      coalesce(sa.marca, 0)                                            as marca
+    from ops.product p
+    join ops.variant v on v.product_id = p.id
+    left join ops.category c on c.id = p.category_id
+    left join ops.stock st on st.variant_id = v.id
+    left join lateral (
+      select
+        sum(quantity) filter (where kind = 'IN_TRANSIT') as transito,
+        sum(quantity) filter (where kind = 'SUPPLIER')   as marca
+      from ops.supply_availability x
+      join ops.operation o2 on o2.id = x.operation_id and o2.code = $1
+      where x.variant_id = v.id
+    ) sa on true
+    where p.material = $2
+    order by v.size_value nulls last, v.size_label
+    `,
+    [operacion, material]
+  )
+
+  if (rows.length === 0) return null
+  const primera = rows[0]
+
+  return {
+    material: primera.material,
+    modelo: primera.modelo,
+    color: primera.color,
+    genero: primera.genero,
+    escala: primera.scale,
+    foto: primera.thumbnail_url,
+    categoria: primera.categoria,
+    tallas: rows.map((r) => ({
+      variantId: r.variant_id,
+      sku: r.sku,
+      tallaLabel: r.size_label,
+      disponible: Number(r.disponible),
+      enTransito: Number(r.transito),
+      enMarca: Number(r.marca),
+    })),
+  }
 }

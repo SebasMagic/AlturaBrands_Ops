@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { crearCotizacionAction } from '@/app/ventas/acciones'
 import type { Cliente } from '@/lib/db/clientes'
 import type { ResultadoBusqueda } from '@/lib/db/ventas'
+import { FichaProducto } from './FichaProducto'
 import {
   pesos,
   totalesDeLinea,
@@ -38,6 +39,9 @@ export function Proforma({ clientes }: { clientes: Cliente[] }) {
   const [resultados, setResultados] = useState<ResultadoBusqueda[]>([])
   const [buscando, setBuscando] = useState(false)
   const [abierto, setAbierto] = useState(false)
+
+  /** Material cuya ficha esta abierta, o null. */
+  const [fichaDe, setFichaDe] = useState<string | null>(null)
 
   const [guardando, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -79,7 +83,16 @@ export function Proforma({ clientes }: { clientes: Cliente[] }) {
   const validacion = useMemo(() => validarProforma(lineas), [lineas])
 
   // --- Líneas --------------------------------------------------------------
-  function agregar(r: ResultadoBusqueda) {
+  type ItemAgregable = {
+    variantId: number
+    sku: string
+    descripcion: string
+    tallaLabel: string
+    disponible: number
+  }
+
+  function agregar(r: ItemAgregable, opciones: { limpiarBusqueda?: boolean } = {}) {
+    const limpiar = opciones.limpiarBusqueda ?? true
     setLineas((prev) => {
       // Si el SKU ya está, se suma una unidad en vez de duplicar la fila: dos
       // líneas del mismo SKU en una proforma son un error de captura.
@@ -105,10 +118,24 @@ export function Proforma({ clientes }: { clientes: Cliente[] }) {
         },
       ]
     })
-    setQ('')
-    setResultados([])
-    setAbierto(false)
-    buscadorRef.current?.focus()
+    if (limpiar) {
+      setQ('')
+      setResultados([])
+      setAbierto(false)
+      buscadorRef.current?.focus()
+    }
+  }
+
+  /**
+   * Agregar desde la ficha NO la cierra: lo normal es revisar la corrida y
+   * meter dos o tres tallas seguidas, y cerrar tras cada una obligaria a
+   * reabrirla — justo la friccion que la ficha viene a quitar.
+   *
+   * Tampoco limpia el buscador: hacerlo devolveria el foco al campo que esta
+   * DEBAJO del modal, sacando al usuario del dialogo sin avisar.
+   */
+  function agregarDesdeFicha(item: ItemAgregable) {
+    agregar(item, { limpiarBusqueda: false })
   }
 
   const actualizar = (key: string, cambios: Partial<LineaProforma>) =>
@@ -210,18 +237,49 @@ export function Proforma({ clientes }: { clientes: Cliente[] }) {
         {abierto && resultados.length > 0 && (
           <div className="border-line bg-surface absolute right-4 left-4 z-20 mt-1 max-h-72 overflow-y-auto rounded-md border shadow-lg">
             {resultados.map((r) => (
-              <button
+              /* Fila y no un solo boton: el de la ficha no puede anidarse
+                 dentro del de agregar, seria HTML invalido y el clic del
+                 interior dispararia tambien el exterior. */
+              <div
                 key={r.variantId}
-                onClick={() => agregar(r)}
-                className="hover:bg-surface-hover flex w-full items-center gap-x-3 px-3 py-2 text-left"
+                className="hover:bg-surface-hover flex items-center gap-x-2 px-2 py-1.5"
               >
-                <span className="text-ink min-w-0 flex-1 truncate text-sm">{r.descripcion}</span>
-                <span className={'text-ink-subtle text-xs ' + num}>{r.tallaLabel}</span>
-                <span className={'text-ink-muted w-32 text-right text-xs ' + num}>{r.sku}</span>
-                <span className={'text-stock-bodega w-16 text-right text-xs ' + num}>
-                  hay {r.disponible}
-                </span>
-              </button>
+                <button
+                  onClick={() => agregar(r)}
+                  className="flex min-w-0 flex-1 items-center gap-x-3 text-left"
+                >
+                  {r.foto ? (
+                    /* eslint-disable-next-line @next/next/no-img-element -- CDN externo */
+                    <img
+                      src={r.foto}
+                      alt=""
+                      loading="lazy"
+                      className="border-line bg-surface h-9 w-9 shrink-0 rounded border object-cover"
+                    />
+                  ) : (
+                    <div className="border-line bg-surface-subtle text-ink-muted flex h-9 w-9 shrink-0 items-center justify-center rounded border text-[10px]">
+                      s/f
+                    </div>
+                  )}
+                  <span className="text-ink min-w-0 flex-1 truncate text-sm">{r.descripcion}</span>
+                  <span className={'text-ink-subtle shrink-0 text-xs ' + num}>{r.tallaLabel}</span>
+                  <span className={'text-ink-muted w-32 shrink-0 text-right text-xs ' + num}>
+                    {r.sku}
+                  </span>
+                  <span className={'text-stock-bodega w-16 shrink-0 text-right text-xs ' + num}>
+                    hay {r.disponible}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setFichaDe(r.material)}
+                  title={'Ver ficha de ' + r.descripcion}
+                  aria-label={'Ver ficha de ' + r.descripcion}
+                  className="text-ink-muted hover:bg-surface-hover hover:text-interactive shrink-0 rounded px-1.5 py-1 text-sm"
+                >
+                  &#8599;
+                </button>
+              </div>
             ))}
           </div>
         )}
@@ -410,6 +468,14 @@ export function Proforma({ clientes }: { clientes: Cliente[] }) {
         <div className="border-danger/30 bg-danger-bg text-danger rounded-lg border px-4 py-2 text-sm">
           {error}
         </div>
+      )}
+
+      {fichaDe && (
+        <FichaProducto
+          material={fichaDe}
+          onCerrar={() => setFichaDe(null)}
+          onAgregar={agregarDesdeFicha}
+        />
       )}
 
       <div className="flex flex-wrap items-center gap-3">
